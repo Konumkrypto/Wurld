@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lifemindwurld</title>
+<style>
+:root{--ink:#14172b;--card:#fff;--mut:#5b6078;--g:#18c76f;--b:#2f7bff;--p:#8a5cf6;--glass:rgba(20,23,43,.68);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--card:#1d2140;--ink:#f2f3fb;--mut:#a7abc8}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overflow:hidden;background:#7ed0e8;font:14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.fl{position:fixed;z-index:5}
+header{left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:20px;color:#fff}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:16px;margin-right:auto}
+button{font:inherit;cursor:pointer;border:0;color:inherit;transition:transform .12s}
+button:active{transform:scale(.94)}
+.btn{padding:8px 13px;border-radius:14px;font-weight:700;background:rgba(255,255,255,.16);color:#fff}
+.btn.pri{background:linear-gradient(135deg,var(--g),var(--b))}
+.ico{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:17px}
+#stats{top:calc(env(safe-area-inset-top,0px) + 62px);left:10px;right:10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.pill{white-space:nowrap;padding:5px 10px;border-radius:99px;background:var(--glass);color:#fff;font-size:12px;font-weight:600;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pill.w{background:rgba(255,255,255,.92);color:#14172b}.pill.on{background:var(--p);color:#fff}
+#disc{top:calc(env(safe-area-inset-top,0px) + 96px);left:10px;right:10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+#disc button{box-shadow:0 3px 10px #0003}
+#tick{top:calc(env(safe-area-inset-top,0px) + 132px);left:10px;max-width:calc(100% - 70px);display:flex;gap:6px;align-items:center}
+#city{top:calc(env(safe-area-inset-top,0px) + 168px);left:10px}
+#ctl{right:10px;top:50%;transform:translateY(-62%);display:flex;flex-direction:column;gap:8px}
+#ctl button{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.94);color:#14172b;font-size:20px;font-weight:700;box-shadow:0 4px 12px #0003}
+.bub{position:fixed;left:0;top:0;z-index:3;will-change:transform;pointer-events:none}
+.bub button{pointer-events:auto;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.95);font-size:21px;box-shadow:0 5px 12px #0004;display:block;margin:-62px 0 0 -21px;animation:fl 2.6s ease-in-out infinite}
+.bub.m button{background:#ffe27a;animation:pu 1.4s ease-in-out infinite;border:2px solid #fff}
+.bub.sel button{outline:3px solid var(--p);transform:scale(1.2)}
+.bub i{position:absolute;left:50%;top:-18px;transform:translateX(-50%);font:600 11px system-ui;background:#14172bdd;color:#fff;padding:2px 7px;border-radius:8px;white-space:nowrap;opacity:0;transition:.15s;font-style:normal}
+.bub:hover i,.bub.sel i{opacity:1}
+@keyframes fl{50%{translate:0 -5px}}@keyframes pu{50%{scale:1.15;box-shadow:0 0 0 10px #ffe27a55}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#cta,#card{left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);max-width:520px;margin:0 auto;background:var(--card);color:var(--ink);border-radius:26px;padding:14px 16px;box-shadow:0 10px 30px #0004;transition:transform .3s}
+#cta h2{margin:0;font-size:19px}#cta p{margin:3px 0 10px;color:var(--mut)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.big{flex:1;padding:12px;border-radius:16px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--g),var(--b))}
+.big.s{background:linear-gradient(135deg,var(--p),var(--b))}.big.o{background:#e8eaf6;color:#14172b}
+.xp{height:7px;border-radius:5px;background:#8883;overflow:hidden;flex:1}.xp b{display:block;height:100%;background:var(--g);width:0}
+#card{transform:translateY(160%);z-index:6}#card.open{transform:none}#cta.hide{transform:translateY(160%)}
+#card h3{margin:0 0 2px;font-size:17px}.tag{font-size:11px;font-weight:800;color:#fff;background:var(--p);padding:2px 7px;border-radius:6px}
+.mut{color:var(--mut)}
+nav{left:0;right:0;bottom:0;padding:6px 6px calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;justify-content:space-around;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff}
+nav button{background:none;font-size:11px;font-weight:700;opacity:.75;padding:4px 8px}nav button.on{opacity:1;color:#7dffb8}nav span{display:block;font-size:19px}
+#mod{position:fixed;inset:0;z-index:20;background:#0008;display:none;align-items:flex-end;justify-content:center}
+#mod.open{display:flex}#box{background:var(--card);color:var(--ink);width:100%;max-width:520px;max-height:82%;overflow:auto;border-radius:26px 26px 0 0;padding:18px;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+#box h3{margin:0 0 10px}.it{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px;border-radius:14px;background:#8881;margin-bottom:6px;color:var(--ink)}
+.it small{display:block;color:var(--mut)}input{width:100%;padding:12px;border-radius:14px;border:1px solid #8885;background:transparent;color:var(--ink);font:inherit;margin-bottom:8px}
+#toast{left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;background:#14172bee;color:#fff;padding:12px 18px;border-radius:16px;font-weight:700;pointer-events:none;transition:.25s;z-index:30;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,-50%)}
+#load{position:fixed;inset:0;z-index:40;background:#7ed0e8;display:grid;place-items:center;font-weight:800;color:#14172b;transition:opacity .4s}
+.dnav,.tg{display:none}.tg{font:500 11px system-ui;opacity:.75;margin-left:4px}.dnav button{background:none;font-weight:700;padding:8px 10px;border-radius:12px;opacity:.85}.dnav button:hover{background:rgba(255,255,255,.16);opacity:1}
+@media (min-width:900px){.dnav{display:flex;gap:2px}.tg{display:block}#bMenu,nav{display:none}#cta,#card{bottom:calc(env(safe-area-inset-bottom,0px) + 24px)}header{left:50%;right:auto;width:min(1100px,calc(100% - 20px));transform:translateX(-50%)}}
+.sw{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 12px}.sw button{min-width:38px;height:38px;border-radius:19px;border:3px solid transparent;background:#8883;padding:0 12px;color:inherit;font-weight:600;font-size:12px}.sw button.sel{border-color:var(--p);background-color:#8a5cf633}.sw button[style]{width:38px;padding:0;border-radius:50%}.sw button[style].sel{border-color:var(--p)}
+.pv{width:100%;max-width:240px;display:block;margin:0 auto 8px;border-radius:18px;background:linear-gradient(#bfe8f5,#9fd9a6)}.bgs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0 12px;text-align:center;font-size:10px;font-weight:700}.bgs span{display:block;font-size:24px}.bgs .lk{opacity:.3;filter:grayscale(1)}
+#gm{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:linear-gradient(160deg,#1d2140,#14172b);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px calc(env(safe-area-inset-bottom,0px) + 14px)}#gm.open{display:flex}#gmh{display:flex;align-items:center;gap:10px;margin:0 auto 10px;width:100%;max-width:560px}#gmt{font-size:17px;margin-right:auto}#gms{display:flex;gap:6px}#gmx{width:38px;height:38px;border-radius:50%;background:#fff2;color:#fff;font-size:16px}#gmb{flex:1;overflow:auto;max-width:560px;width:100%;margin:0 auto}
+.res{text-align:center;padding-top:5vh}.res h2{margin:6px 0}.big-n{font-size:56px;font-weight:900;line-height:1}.det{margin:12px 0;color:#c9ccea;line-height:1.6}.rew{font-weight:800;color:#7dffb8;font-size:18px;margin:10px 0 18px}
+.opt{display:block;width:100%;padding:14px;margin-bottom:8px;border-radius:16px;background:#fff1;color:#fff;font-weight:700;text-align:left;font-size:16px}.opt.ok{background:#18c76f}.opt.no{background:#e05a5a}
+.tb{height:8px;background:#fff2;border-radius:6px;overflow:hidden;margin-bottom:14px}.tb i{display:block;height:100%;background:linear-gradient(90deg,#18c76f,#2f7bff);transition:width 1s linear;width:100%}
+.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:420px;margin:10px auto}.mc{aspect-ratio:1;border-radius:14px;background:linear-gradient(135deg,#8a5cf6,#2f7bff);font-size:clamp(26px,9vw,44px);padding:0}.mc.up{background:#fff}.mc.ok{background:#18c76f88}
+#hunt{top:calc(env(safe-area-inset-top,0px) + 205px);left:10px;right:64px;max-width:440px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;border-radius:18px;padding:10px}
+.logo-b{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#8a5cf6,#2f7bff);display:grid;place-items:center;font-size:30px;flex:none}
+select,textarea{width:100%;padding:12px;border-radius:14px;border:1px solid #8885;background:transparent;color:var(--ink);font:inherit;margin-bottom:8px}option{color:#14172b}
+.bub.feat button{box-shadow:0 0 0 4px #ffd166cc,0 5px 12px #0004}
+</style></head><body>
+<div id="load">🌍 Building your city…</div>
+<canvas id="cv"></canvas><div id="bubs"></div>
+<header class="fl">
+ <div class="logo"><svg width="28" height="28" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="#7dffb8" stroke-width="2.5"/><path d="M16 7 8 21h16z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="7" r="3.2" fill="#8a5cf6"/><circle cx="8" cy="21" r="3.2" fill="#2f7bff"/><circle cx="24" cy="21" r="3.2" fill="#18c76f"/></svg>Lifemindwurld<small class="tg">Explore your world. Play your life.</small></div>
+ <div class="dnav"><button data-m="World">World</button><button data-m="Games">Games</button><button data-m="Missions">Missions</button><button data-m="Discover">Discover</button><button data-m="Community">Community</button><button data-m="Leaderboard">Leaderboard</button><button data-m="Profile">Profile</button></div>
+ <span id="hdr" class="row" style="gap:6px"><button class="btn" id="bLog">Log In</button><button class="btn pri" id="bSign">Sign Up</button></span>
+ <button class="ico" id="bMenu" aria-label="Menu">☰</button>
+</header>
+<div id="stats" class="fl"><span class="pill">● Players Online 1,247</span><span class="pill" id="pcities">🌍 Cities</span><span class="pill">🎮 Games 18</span><span class="pill">🏢 Businesses 320</span><span class="pill" style="background:#b4690e">Demo values</span></div>
+<div id="disc" class="fl"></div>
+<div id="tick" class="fl"><span class="pill w" id="tk">…</span><span class="pill" style="font-size:10px">Simulated</span></div>
+<button id="city" class="fl pill w" style="font-size:13px">🌍 … ▾</button>
+<div id="ctl" class="fl"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><button id="loc" aria-label="Locate avatar">⌖</button><button id="sr" aria-label="Search">🔎</button><button id="mp" aria-label="Districts">🗺</button></div>
+<div id="card" class="fl"></div>
+<div id="cta" class="fl"></div>
+<nav class="fl" id="nav"><button class="on" data-n="world"><span>🌆</span>WORLD</button><button data-n="game"><span>🎮</span>GAMES</button><button data-n="mission"><span>⭐</span>MISSIONS</button><button data-n="disc"><span>🧭</span>DISCOVER</button><button data-n="prof"><span>👤</span>PROFILE</button></nav>
+<div id="gm"><div id="gmh"><b id="gmt"></b><span id="gms"></span><button id="gmx" aria-label="Close game">✕</button></div><div id="gmb"></div></div><div id="hunt" class="fl" style="display:none"></div>
+<div id="mod"><div id="box"></div></div><div id="toast" class="fl"></div>
+<script id="citydata">
+/* DATA ONLY: World > Country > City > District > Location. Swap this block for Supabase queries later.
+   terrain: size, road lines, bridge rows, rects (t=water|park|plaza, st=building style). Engine never names a city. */
+const AD_D0="2026-10-01",AD_D1="2027-03-31",ADX={city:"lagos",starts:AD_D0,ends:AD_D1,status:"active",demo:1,pay:{status:"demo"}};
+/* Content banks and launch policy live in DATA, not in engine code. Ids must be globally unique (new cities should prefix ids, e.g. "ldn_cl1"; Lagos keeps its legacy ids). */
+const TRIVIA_WORLD=[["What is the capital of Ghana?",["Kumasi","Accra","Lomé","Abuja"],1],["What is the capital of Kenya?",["Mombasa","Kisumu","Kampala","Nairobi"],3],["Which city has the Eiffel Tower?",["Berlin","Rome","Paris","Madrid"],2],["Big Ben is in which city?",["London","Dublin","Edinburgh","Paris"],0],["What is the capital of Estonia?",["Riga","Tallinn","Vilnius","Helsinki"],1],["Burj Khalifa is in which city?",["Doha","Abu Dhabi","Dubai","Riyadh"],2],["Tokyo is the capital of which country?",["China","Korea","Thailand","Japan"],3],["Which city is nicknamed the Big Apple?",["New York","Chicago","Boston","Miami"],0],["Berlin is the capital of which country?",["Austria","Germany","Poland","Switzerland"],1]];
+/* A city is PLAYABLE only if published AND every "core" item below passes. Optional items are reported but do not block launch. */
+const READY={districts:4,locations:12,landmarks:5,minTrivia:10,huntTargets:5,gameIds:["trivia","memory","hunt"]};
+const LANG={en:"English",sw:"Swahili",fr:"French",de:"German",et:"Estonian",ar:"Arabic",ja:"Japanese"};
+const WORLD={defaultCity:"lagos",countries:[
+{id:"ng",name:"Nigeria",cities:[{id:"lagos",name:"Lagos",published:true,tz:"Africa/Lagos",langs:["en"],contentLangs:["en"],inventory:{billboardRotation:4,featuredListings:3,missions:3},events:[],
+ trivia:[["Which is Nigeria’s largest city?",["Abuja","Lagos","Kano","Ibadan"],1],["What is the capital of Nigeria?",["Lagos","Kano","Abuja","Port Harcourt"],2],["Lagos sits on which ocean?",["Atlantic","Indian","Pacific","Arctic"],0]],
+ missionCatalog:[
+      {id:"e1",type:"exploration",title:"Waterfront Walker",desc:"Check in at the Atlantic Promenade.",goal:{k:"refs",refs:["wc1"]},reward:{xp:60,c:15},period:"once"},
+      {id:"e2",type:"exploration",title:"Culture Seeker",desc:"Check in at Community Plaza and Eko Arena.",goal:{k:"refs",refs:["cp1","cl3"]},reward:{xp:100,c:25},period:"once"},
+      {id:"x1",type:"event",title:"Lagos Launch Week",desc:"Play 5 games during the event.",goal:{k:"plays",n:5},reward:{xp:300,c:75},period:"event",window:[Date.parse("2026-10-19T00:00:00Z"),Date.parse("2026-11-02T23:59:59Z")]}],
+ spawn:[12,12],
+ terrain:{size:24,roadsX:[0,6,12,18],roadsY:[0,6,12,18],bridges:[6,18],rects:[
+  {t:"water",x:20,y:0,w:4,h:24},{t:"park",x:7,y:7,w:5,h:5},{t:"plaza",x:13,y:7,w:5,h:5},
+  {st:"office",x:13,y:1,w:5,h:5},{st:"house",x:1,y:7,w:5,h:5},{st:"shop",x:7,y:13,w:5,h:5},{st:"apt",x:7,y:19,w:5,h:5}]},
+ businesses:[
+ {id:"b1",name:"Sample Kitchen",cat:"restaurants",loc:"fq2",logo:"🍽",desc:"Example restaurant listing that shows how a virtual storefront works. Not a real business.",website:"https://example.com/sample-kitchen",contact:"hello@example.com",hours:"Mon–Sat 09:00–18:00 (example)",featured:[{title:"Example featured offer",text:"Featured content from a verified business appears here."}],status:"verified",demo:1},
+ {id:"b2",name:"Sample Café",cat:"restaurants",loc:"fq1",logo:"☕",desc:"Example café listing used to demonstrate location markers. Not a real business.",website:"https://example.com/sample-cafe",contact:"hello@example.com",hours:"Daily 08:00–17:00 (example)",featured:[{title:"Example menu highlight",text:"Placeholder content."}],status:"verified",demo:1},
+ {id:"b3",name:"Sample Market",cat:"shopping",loc:"cl2",logo:"🛒",desc:"Example shopping listing. Not a real business.",website:"https://example.com/sample-market",contact:"hello@example.com",hours:"Mon–Sat 08:00–19:00 (example)",featured:[{title:"Example featured store",text:"Placeholder content."}],status:"verified",demo:1},
+ {id:"b4",name:"Sample Hotel",cat:"hotels",loc:"wc5",logo:"🏨",desc:"Example hotel listing. Not a real business.",website:"https://example.com/sample-hotel",contact:"hello@example.com",hours:"Reception 24 hours (example)",featured:[{title:"Example stay offer",text:"Placeholder content."}],status:"verified",demo:1},
+ {id:"b5",name:"Sample Academy",cat:"education",loc:"wc3",logo:"🎓",desc:"Example education listing. Not a real school.",website:"https://example.com/sample-academy",contact:"hello@example.com",hours:"Mon–Fri 08:00–16:00 (example)",featured:[{title:"Example open day",text:"Placeholder content."}],status:"verified",demo:1}],
+campaigns:[
+ {...ADX,id:"ac1",biz:"b1",type:"billboard",slot:"bd2",headline:"Sample Kitchen",body:"Example billboard creative. Placeholder content.",cta:"Visit business"},
+ {...ADX,id:"ac2",biz:"b3",type:"billboard",slot:"bd2",headline:"Sample Market",body:"Second example billboard in the rotation.",cta:"Visit business"},
+ {...ADX,id:"ac3",biz:"b2",type:"featured_listing",headline:"Sample Café",body:"Example featured listing shown at the top of Discover.",cta:"View"},
+ {...ADX,id:"ac4",biz:"b1",type:"featured_location",headline:"Sample Kitchen",body:"Example featured location with a highlighted marker.",cta:"Visit"},
+ {...ADX,id:"ac5",biz:"b2",type:"sponsored_mission",headline:"Visit Sample Café",body:"Example sponsored mission: check in at the café.",cta:"Go",reward:{xp:40,c:10}},
+ {...ADX,id:"ac6",biz:"b5",type:"game_challenge",game:"trivia",xmin:8,headline:"Sample Academy Challenge",body:"Example sponsored challenge: get 8 or more correct in City Trivia.",cta:"Play",reward:{xp:60,c:15}}],
+ feed:["New mission available in Lagos","Explore a new location","Business Spotlight: Sample Kitchen","City Challenge Started","New event in Lagos"],
+ missions:{daily:{n:"Daily Mission",need:3,xp:100,c:25,what:"Check in at 3 locations",type:null},explorer:{n:"Lagos Explorer",need:5,xp:250,c:50,what:"Check in at 5 landmarks",type:"landmark"}},
+ districts:[
+ {id:"gz",name:"Game Zone",center:[3,3],locations:[
+  {id:"gz1",name:"City Trivia",cat:"games",desc:"Test your knowledge of cities around the world.",x:3,y:3,visual:{e:"🧠",c:3,h:46},act:"game",game:"trivia",feat:1,tags:"games trivia quiz play"},
+  {id:"gz2",name:"Memory Match",cat:"games",desc:"Flip cards and match the city icons.",x:4,y:2,visual:{e:"🃏",c:2,h:36},act:"game",game:"memory",tags:"games memory cards play"},
+  {id:"gz3",name:"City Scavenger Hunt",cat:"games",desc:"Follow clues and find places across Lagos.",x:2,y:4,visual:{e:"🧭",c:4,h:40},act:"game",game:"hunt",tags:"games scavenger hunt clues play"},
+  {id:"m2",name:"Lagos Explorer",cat:"mission",desc:"Discover 5 landmarks.",x:5,y:5,walk:1,visual:{e:"🏆",c:3,h:10},act:"mission",mission:"explorer",tags:"mission quest landmarks"}]},
+ {id:"fq",name:"Food Quarter",center:[9,3],locations:[
+  {id:"fq1",name:"Café Orchid",cat:"food",desc:"A quiet corner café (example location).",x:8,y:2,visual:{e:"☕",c:5,h:30},act:"info",tags:"cafe coffee food"},
+  {id:"fq2",name:"Eko Bites",cat:"food",desc:"Example sponsored restaurant placement (demo business).",x:10,y:4,visual:{e:"🍔",c:0,h:34},act:"business",sponsored:1,feat:1,tags:"restaurants food sponsored business"}]},
+ {id:"bd",name:"Business District",center:[15,3],locations:[
+  {id:"bd1",name:"Eko Tower",cat:"business",desc:"Offices and storefronts. Businesses can claim a virtual storefront here.",x:15,y:3,visual:{e:"💼",c:1,h:100},act:"business",feat:1,tags:"business offices"},
+  {id:"bd2",name:"Digital Billboard",cat:"ad",desc:"Configurable ad placement (demo).",x:14,y:2,visual:{e:"📣",c:2,h:60,bb:1},act:"business",sponsored:1,tags:"billboard ads sponsored"},
+  {id:"bd3",name:"Independence Monument",cat:"landmark",desc:"A city landmark in the business district.",x:16,y:4,visual:{e:"🗽",c:0,h:70},act:"info",tags:"monument landmark"}]},
+ {id:"hp",name:"Homes & Park",center:[6,9],locations:[
+  {id:"hp1",name:"Surulere Homes",cat:"home",desc:"Residential streets. Avatar homes will live here.",x:3,y:9,visual:{e:"🏠",c:5,h:22},act:"info",feat:1,tags:"homes houses"},
+  {id:"hp2",name:"Freedom Park",cat:"landmark",desc:"Green space with a pavilion for events.",x:9,y:9,visual:{e:"🌴",c:4,h:24},act:"info",tags:"park recreation landmark"}]},
+ {id:"cp",name:"Community Plaza",center:[15,9],locations:[
+  {id:"cp1",name:"Community Plaza",community:1,cat:"landmark",desc:"The social heart of the city. Meet other players here.",x:15,y:9,visual:{e:"⛲",c:1,h:20},act:"info",feat:1,tags:"plaza community landmark"},
+  {id:"m1",name:"Daily Mission",cat:"mission",desc:"Visit 3 locations.",x:14,y:10,walk:1,visual:{e:"⭐",c:3,h:10},act:"mission",mission:"daily",tags:"mission quest daily"}]},
+ {id:"cl",name:"Central Lagos",center:[9,15],locations:[
+  {id:"cl1",name:"General Hospital",cat:"health",desc:"Hospitals and clinics.",x:3,y:15,visual:{e:"🏥",c:2,h:44},act:"info",feat:1,tags:"hospital health"},
+  {id:"cl2",name:"Lagos Market",cat:"shop",desc:"Markets and featured stores.",x:9,y:15,visual:{e:"🛍",c:3,h:24},act:"info",feat:1,tags:"shopping stores market"},
+  {id:"cl3",name:"Eko Arena",cat:"event",desc:"Upcoming city events appear here (example).",x:15,y:15,visual:{e:"🎵",c:5,h:40},act:"info",feat:1,tags:"events music entertainment"},
+  {id:"cl4",name:"City Services Hub",cat:"services",desc:"Public services information point (virtual place).",x:14,y:16,visual:{e:"⚖",c:1,h:34},act:"info",tags:"services government"}]},
+ {id:"wc",name:"Waterfront & Campus",center:[15,21],locations:[
+  {id:"wc1",name:"Atlantic Promenade",cat:"landmark",desc:"Waterfront walkway with bridge views.",x:19,y:10,walk:1,visual:{e:"🌊",c:1,h:10},act:"info",feat:1,tags:"waterfront promenade landmark"},
+  {id:"wc2",name:"Eko Lighthouse",cat:"landmark",desc:"A landmark on the shoreline.",x:19,y:15,visual:{e:"🗼",c:0,h:80},act:"info",tags:"lighthouse landmark waterfront"},
+  {id:"wc3",name:"Lagos Academy",cat:"education",desc:"Education hub.",x:3,y:21,visual:{e:"📚",c:4,h:40},act:"info",tags:"school education"},
+  {id:"wc4",name:"Eko Heights",cat:"home",desc:"Apartment tower.",x:9,y:21,visual:{e:"🏢",c:2,h:70},act:"info",tags:"apartments homes"},
+  {id:"wc5",name:"Waterfront Hotel",cat:"hotel",desc:"Hotel by the water.",x:15,y:21,visual:{e:"🏨",c:5,h:50},act:"info",tags:"hotel stay"}]}]}]},
+{id:"gb",name:"United Kingdom",cities:[{id:"london",name:"London",published:false,tz:"Europe/London",langs:["en"],contentLangs:[]}]},
+{id:"us",name:"United States",cities:[{id:"ny",name:"New York",published:false,tz:"America/New_York",langs:["en"],contentLangs:[]}]},
+{id:"ke",name:"Kenya",cities:[{id:"nairobi",name:"Nairobi",published:false,tz:"Africa/Nairobi",langs:["en","sw"],contentLangs:[]}]},
+{id:"gh",name:"Ghana",cities:[{id:"accra",name:"Accra",published:false,tz:"Africa/Accra",langs:["en"],contentLangs:[]}]},
+{id:"fr",name:"France",cities:[{id:"paris",name:"Paris",published:false,tz:"Europe/Paris",langs:["fr"],contentLangs:[]}]},
+{id:"de",name:"Germany",cities:[{id:"berlin",name:"Berlin",published:false,tz:"Europe/Berlin",langs:["de"],contentLangs:[]}]},
+{id:"ee",name:"Estonia",cities:[{id:"tallinn",name:"Tallinn",published:false,tz:"Europe/Tallinn",langs:["et"],contentLangs:[]}]},
+{id:"ae",name:"United Arab Emirates",cities:[{id:"dubai",name:"Dubai",published:false,tz:"Asia/Dubai",langs:["ar","en"],contentLangs:[]}]},
+{id:"jp",name:"Japan",cities:[{id:"tokyo",name:"Tokyo",published:false,tz:"Asia/Tokyo",langs:["ja"],contentLangs:[]}]}]};
+</script>
+<script>
+// ---- Engine: renders and simulates whatever city WORLD provides ----
+const S={user:null,xp:0,coins:100,visited:new Set(),active:{},done:{},city:"lagos",sel:null};
+const $=q=>document.querySelector(q),TW=32,TH=16,DIRS=[[1,0],[-1,0],[0,1],[0,-1]];
+const cv=$("#cv"),cx=cv.getContext("2d"),reduce=matchMedia("(prefers-reduced-motion:reduce)").matches,LOW=(navigator.hardwareConcurrency||4)<=4;
+let BIZ=[],W,H,dpr,z=1,cam={x:12,y:12},tgt=null,locs=[],N=24,G=[],CITY,DISTRICTS=[],MISSIONS={},FEED=[""],lastDraw=0,lod=false;
+const CITIES=WORLD.countries.flatMap(k=>k.cities.map(c=>({...c,country:k.name})));
+function tileKind(T,x,y){const w=(T.rects||[]).some(r=>r.t=="water"&&x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h);if(T.roadsX.includes(x)&&!w)return"road";if(T.roadsY.includes(y)&&(!w||(T.bridges||[]).includes(y)))return"road";return w?"water":"land"}
+const cityLocs=id=>cityLocsOf(CITIES.find(c=>c.id==id)||{});
+const cityLocsOf=c=>(c.districts||[]).flatMap(d=>(d.locations||[]).map(l=>({...l,district:d.id,d:d.name})));
+function cityErrors(c){const T=c.terrain,e=[];if(!T)return e;if(!(T.size>=8&&T.size<=64)||!Array.isArray(T.roadsX)||!Array.isArray(T.roadsY))return["terrain needs size 8–64 and road lines"];const L=cityLocsOf(c),ids=new Set(),tiles=new Set();
+ L.forEach(l=>{if(ids.has(l.id))e.push("duplicate id "+l.id);ids.add(l.id);const o=CITIES.find(x=>x!==c&&cityLocsOf(x).some(y=>y.id==l.id));if(o)e.push("id "+l.id+" also used by "+o.name);
+  if(!(l.x>=0&&l.y>=0&&l.x<T.size&&l.y<T.size)){e.push(l.id+" is outside the map");return}if(tileKind(T,l.x,l.y)!="land")e.push(l.id+" is on a "+tileKind(T,l.x,l.y)+" tile");const k=l.x+","+l.y;if(tiles.has(k))e.push(l.id+" shares a tile");tiles.add(k)});
+ (c.districts||[]).forEach(d=>{if(!d.center||!(d.center[0]>=0&&d.center[1]>=0&&d.center[0]<T.size&&d.center[1]<T.size))e.push("district "+d.id+" has no valid center")});
+ (c.businesses||[]).forEach(b=>{if(!ids.has(b.loc))e.push("business "+b.id+" points to a missing location")});if(!c.spawn||tileKind(T,c.spawn[0],c.spawn[1])=="water")e.push("spawn point is invalid");return e}
+function cityDay(t){const z=(typeof CITY!="undefined"&&CITY&&CITY.tz)||"UTC";try{const p=Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:z,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(t)).map(x=>[x.type,x.value]));return p.year+"-"+p.month+"-"+p.day}catch(e){return new Date(t).toISOString().slice(0,10)}}
+function cityReport(c){const T=c.terrain,ds=c.districts||[],ls=ds.flatMap(d=>d.locations||[]),bb=ls.filter(l=>l.visual&&l.visual.bb).length,tr=TRIVIA_WORLD.length+(c.trivia||[]).length,inv={billboardRotation:4,featuredListings:3,missions:3,...(c.inventory||{})};
+ const errs=cityErrors(c),items=[{k:"map",n:"Unique map",core:1,ok:!!T&&T.size>0,d:T?T.size+"×"+T.size+" tiles":"Not built yet"},
+  {k:"integrity",n:"Map data valid",core:1,ok:!!T&&!errs.length,d:!T?"No map to check":errs.length?errs.slice(0,2).join("; "):"All locations, ids and spawn point valid"},
+  {k:"districts",n:"Districts",core:1,ok:ds.length>=READY.districts,d:ds.length+" of "+READY.districts+" needed"},
+  {k:"locations",n:"Locations",core:1,ok:ls.length>=READY.locations,d:ls.length+" of "+READY.locations+" needed"},
+  {k:"landmarks",n:"Landmarks",core:1,ok:ls.filter(l=>l.cat=="landmark").length>=READY.landmarks,d:ls.filter(l=>l.cat=="landmark").length+" of "+READY.landmarks+" needed"},
+  {k:"games",n:"Games",core:1,ok:READY.gameIds.every(g=>ls.some(l=>l.game==g))&&tr>=READY.minTrivia&&ls.filter(l=>l.act!="mission"&&l.act!="game").length>=READY.huntTargets,d:READY.gameIds.filter(g=>ls.some(l=>l.game==g)).length+"/"+READY.gameIds.length+" game locations, "+tr+" trivia questions"},
+  {k:"missions",n:"Missions",core:1,ok:ls.some(l=>l.mission=="daily")&&ls.some(l=>l.mission=="explorer"),d:(c.missionCatalog||[]).length+" city missions + shared missions"},
+  {k:"businesses",n:"Businesses",core:0,ok:(c.businesses||[]).some(b=>b.status=="verified"&&!b.demo),d:(c.businesses||[]).filter(b=>!b.demo).length+" verified (demo listings don't count)"},
+  {k:"events",n:"Events",core:0,ok:(c.events||[]).length>=1,d:(c.events||[]).length+" scheduled"},
+  {k:"local",n:"Local content",core:0,ok:(c.trivia||[]).length>=1&&(c.feed||[]).length>=1,d:(c.trivia||[]).length+" local trivia, "+(c.feed||[]).length+" feed items"},
+  {k:"ads",n:"Advertising inventory",core:0,ok:bb>=1,d:bb?bb+" billboard slot(s) × "+inv.billboardRotation+" rotation, "+inv.featuredListings+" featured listings, "+inv.missions+" sponsored missions":"No billboard slots yet"}];
+ return{items,core:items.filter(i=>i.core).every(i=>i.ok),done:items.filter(i=>i.ok).length,total:items.length}}
+const playable=c=>!!(c&&c.published&&c.terrain&&cityReport(c).core);
+function startCity(){let id=null;try{id=localStorage.getItem("lmw_city")}catch(e){}return playable(CITIES.find(x=>x.id==id))?id:WORLD.defaultCity}
+function rs(){dpr=Math.min(devicePixelRatio||1,LOW?1:1.5);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);lastDraw=0}
+addEventListener("resize",rs);rs();
+const hash=(a,b)=>{let h=(a*374761393+b*668265263)^(a*b+7);h=(h^(h>>13))*1274126177;return((h^(h>>16))>>>0)/4294967295};
+const PAL=[["#f4a261","#e07a3f","#c9622c"],["#8ecae6","#5fa8cc","#4690b4"],["#cdb4db","#a98bc0","#8f72a8"],["#ffd166","#e6b345","#cc9a2f"],["#95d5b2","#6cb88e","#4f9f74"],["#f28482","#d9605e","#bf4a48"]];
+const STY={house:[10,18,[0,3,5]],apt:[36,60,[2,4]],office:[56,96,[1,2]],shop:[14,24,[3,5,0]],mix:[18,44,[0,1,2,3,4,5]]};
+const av={x:12.5,y:12.5,path:[],av:1,mv:0},npcs=[];
+const cell=(x,y)=>x>=0&&y>=0&&x<N&&y<N?G[y*N+x]:null;
+const ok=(x,y)=>{const g=cell(x,y);return !!g&&(g.k=="road"||g.k=="walk"||g.k=="park"||g.k=="plaza")&&!g.solid&&!g.tree};
+const isRoad=(x,y)=>ok(x,y)&&cell(x,y).k=="road";
+const poi=(x,y)=>{const g=cell(x,y);return g&&g.loc};
+function loadCity(id){const c=CITIES.find(x=>x.id==id&&x.terrain);if(!c)return false;CITY=c;const T=c.terrain;N=T.size;
+ G=Array.from({length:N*N},(_,i)=>({x:i%N,y:i/N|0,k:"bld",st:"mix"}));
+ (T.rects||[]).forEach(r=>{for(let y=r.y;y<r.y+r.h&&y<N;y++)for(let x=r.x;x<r.x+r.w&&x<N;x++){const g=cell(x,y);if(r.t)g.k=r.t;if(r.st)g.st=r.st}});
+ T.roadsX.forEach(rx=>{for(let y=0;y<N;y++){const g=cell(rx,y);if(g.k!="water"){g.k="road";g.rx=1}}});
+ T.roadsY.forEach(ry=>{for(let x=0;x<N;x++){const g=cell(x,ry);if(g.k!="water"||(T.bridges||[]).includes(ry)){g.k="road";g.ry=1}}});
+ G.forEach(g=>{if(g.k=="bld"&&DIRS.some(d=>{const n=cell(g.x+d[0],g.y+d[1]);return n&&n.k=="road"}))g.k="walk";
+  if(g.k=="bld"){const[a,b,p]=STY[g.st]||STY.mix;g.h=a+hash(g.x,g.y)*(b-a);g.col=PAL[p[hash(g.y,g.x)*p.length|0]]}
+  if(g.k=="park")g.tree=hash(g.x+3,g.y)>.55;if(g.k=="walk")g.lamp=hash(g.x,g.y+5)>.85});
+ locs=[];DISTRICTS=[];c.districts.forEach(d=>d.locations.forEach(l=>{const o={...l,n:l.name,d:d.name,district:d.id,city:c.id,e:l.visual.e,t:l.act=="game"?"game":l.act=="mission"?"mission":l.act=="business"?"biz":l.cat,sp:l.sponsored,mk:l.mission,tg:l.tags||"",vh:l.visual.h||26};
+  locs.push(o);const g=cell(l.x,l.y);g.loc=o;g.tree=0;g.lamp=0;if(!l.walk)g.solid=1;if(l.feat)DISTRICTS.push(l.id)}));
+ MISSIONS=c.missions||{};FEED=c.feed||[""];BIZ=(c.businesses||[]).filter(b=>b.status=="verified");BIZ.forEach(b=>{const l=locs.find(x=>x.id==b.loc);if(l){l.biz=b;l.e=b.logo;l.n=b.name;}});S.city=id;S.sel=null;
+ av.path=[];av.x=c.spawn[0]+.5;av.y=c.spawn[1]+.5;cam.x=av.x;cam.y=av.y;
+ npcs.length=0;const tiles=G.filter(g=>ok(g.x,g.y)),roads=tiles.filter(g=>g.k=="road");
+ for(let i=0;i<(LOW?8:16);i++){const car=i%3==0,pool=car?roads:tiles,g=pool[(i*37+11)%pool.length];npcs.push({x:g.x+.5,y:g.y+.5,i:g.x,j:g.y,ti:g.x,tj:g.y,car,c:PAL[i%6][0],v:car?2.2:1.1})}
+ return true}
+function switchCity(id){const c=CITIES.find(x=>x.id==id);if(!c||!playable(c))return toast("Coming soon");
+ const go=()=>{if(!loadCity(id))return toast("Coming soon");try{localStorage.setItem("lmw_city",id)}catch(e){}if(Games.endH)Games.endH();closeCard();DQ={q:"",c:"all",v:0,s:"near"};Ads.apply();mkBubs();drawDisc();cityLabel();cta();cv.style.opacity=1;toast("Welcome to "+CITY.name)};
+ if(reduce)go();else{cv.style.transition="opacity .25s";cv.style.opacity=0;setTimeout(go,260)}}
+function path(sx,sy,gx,gy){const sk=sy*N+sx,q=[[sx,sy]],pv=new Map([[sk,-1]]);while(q.length){const[x,y]=q.shift();if(x==gx&&y==gy){const r=[];let k=gy*N+gx;while(k!=sk){r.unshift([k%N,k/N|0]);k=pv.get(k)}return r}
+ DIRS.forEach(([a,b])=>{const nx=x+a,ny=y+b,k=ny*N+nx;if(ok(nx,ny)&&!pv.has(k)){pv.set(k,y*N+x);q.push([nx,ny])}})}return null}
+function near(x,y){for(let r=0;r<6;r++)for(let a=-r;a<=r;a++)for(let b=-r;b<=r;b++)if(Math.max(Math.abs(a),Math.abs(b))==r&&ok(x+a,y+b))return[x+a,y+b];return null}
+function walkTo(x,y){const t=near(x,y);if(!t)return toast("Can’t reach that");const p=path(av.x|0,av.y|0,t[0],t[1]);if(!p)return toast("No path there");av.path=p}
+addEventListener("keydown",e=>{const m={ArrowUp:[0,-1],w:[0,-1],ArrowRight:[1,0],d:[1,0],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0]}[e.key];if(!m||av.path.length||e.target.tagName=="INPUT")return;const x=(av.x|0)+m[0],y=(av.y|0)+m[1];if(ok(x,y))av.path=[[x,y]];else toast("Blocked")});
+function step(dt){if(av.path.length){const n=av.path[0],tx=n[0]+.5,ty=n[1]+.5,dx=tx-av.x,dy=ty-av.y,d=Math.hypot(dx,dy),s=3.4*dt;if(d<=s){av.x=tx;av.y=ty;av.path.shift()}else{av.x+=dx/d*s;av.y+=dy/d*s}av.mv=1;
+  if(!tgt&&!ptr.size){cam.x+=(av.x-cam.x)*.08;cam.y+=(av.y-cam.y)*.08}}else av.mv=0;
+ if(!reduce)npcs.forEach(n=>{const tx=n.ti+.5,ty=n.tj+.5,dx=tx-n.x,dy=ty-n.y,d=Math.hypot(dx,dy),s=n.v*dt;if(d>s){n.x+=dx/d*s;n.y+=dy/d*s;return}
+  n.x=tx;n.y=ty;const px=n.i,py=n.j;n.i=n.ti;n.j=n.tj;const o=DIRS.map(q=>[n.i+q[0],n.j+q[1]]).filter(q=>(n.car?isRoad(q[0],q[1]):ok(q[0],q[1]))&&!(q[0]==px&&q[1]==py)),c=o.length?o:[[px,py]],q=c[Math.random()*c.length|0];n.ti=q[0];n.tj=q[1]})}
+function P(x,y){return[W/2+((x-cam.x)-(y-cam.y))*TW*z,H/2+((x-cam.x)+(y-cam.y))*TH*z]}
+function poly(pts,f){cx.beginPath();pts.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.closePath();cx.fillStyle=f;cx.fill()}
+function box(x,y,w,h,c){const a=P(x,y),b=P(x+w,y),d=P(x+w,y+w),e=P(x,y+w),u=h*z,up=p=>[p[0],p[1]-u];poly([e,d,up(d),up(e)],c[1]);poly([b,d,up(d),up(b)],c[2]);poly([up(a),up(b),up(d),up(e)],c[0])}
+function ground(g,x,y,t){let f;switch(g.k){case"water":f=((x+y+(reduce?0:t/800|0))&1)?"#4aa8d8":"#58b4e0";break;case"road":f=g.rx&&g.ry?"#4d5270":"#5b6078";break;case"walk":f="#ece6d6";break;case"park":f="#7fcf7a";break;case"plaza":f=(x+y)&1?"#f3dfb3":"#e9cf9b";break;default:f="#cfc8b8"}
+ poly([P(x,y),P(x+1,y),P(x+1,y+1),P(x,y+1)],f);
+ if(g.k=="road"&&!lod&&!(g.rx&&g.ry)){const a=g.ry?P(x,y+.5):P(x+.5,y),b=g.ry?P(x+1,y+.5):P(x+.5,y+1);cx.strokeStyle="#ffffff88";cx.lineWidth=Math.max(1,z);cx.setLineDash([4*z,5*z]);cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(b[0],b[1]);cx.stroke();cx.setLineDash([])}}
+function tree(x,y){const p=P(x+.5,y+.5);cx.fillStyle="#7a5230";cx.fillRect(p[0]-1.5*z,p[1]-10*z,3*z,10*z);cx.beginPath();cx.arc(p[0],p[1]-16*z,8*z,0,7);cx.fillStyle="#2e9d56";cx.fill()}
+function stat(g,x,y){const l=g.loc,sel=l&&S.sel==l;
+ if(g.k=="bld"||(l&&g.solid)){let h,c,w=.84,o=.08;if(l){h=l.vh;c=PAL[l.visual.c%6];if(g.k!="bld"){w=.62;o=.19}}else{h=g.h;c=g.col}
+  box(x+o,y+o,w,h+(sel?8:0),c);const q=P(x+.5,y+.5);
+  if(l&&l.biz&&!l.sponsored){cx.fillStyle="#2f7bff";cx.fillRect(q[0]-8*z,q[1]-(h+8)*z,16*z,5*z)}
+  if(l&&l.sponsored){cx.fillStyle="#18c76f";cx.fillRect(q[0]-8*z,q[1]-(h+8)*z,16*z,5*z)}
+  if(l&&l.visual.bb)Ads.bb(l,q,h);if(l&&l.adFeat&&!lod)Ads.ring(q,h)}
+ else if(g.tree)tree(x,y);
+ else if(g.lamp&&!lod){const p=P(x+.5,y+.5);cx.fillStyle="#333";cx.fillRect(p[0]-z,p[1]-14*z,2*z,14*z);cx.fillStyle="#ffe27a";cx.fillRect(p[0]-3*z,p[1]-17*z,6*z,3*z)}}
+function dyn(o,t){const p=P(o.x,o.y);
+ if(o.av){const b=reduce||!o.mv?0:Math.sin(t/110)*1.5,k=z*.85;AK.draw(cx,p[0],p[1],k,S.av||AK.def(),-Math.abs(b));cx.font="bold "+Math.max(9,10*z)+"px sans-serif";cx.textAlign="center";cx.strokeStyle="#0007";cx.lineWidth=3;cx.fillStyle="#fff";const nm=S.user||"Guest";cx.strokeText(nm,p[0],p[1]-54*k);cx.fillText(nm,p[0],p[1]-54*k)}
+ else if(o.car)box(o.x-.18,o.y-.18,.36,6,[o.c,"#0003","#0005"]);
+ else{cx.fillStyle="#222";cx.fillRect(p[0]-2*z,p[1]-9*z,4*z,9*z);cx.beginPath();cx.arc(p[0],p[1]-12*z,3.2*z,0,7);cx.fillStyle=o.c;cx.fill()}}
+function draw(t){if(LOW&&t-lastDraw<33)return;lastDraw=t;lod=z<.7;cx.fillStyle="#7ed0e8";cx.fillRect(0,0,W,H);
+ const d=[av,...npcs].sort((a,b)=>((a.x|0)+(a.y|0))-((b.x|0)+(b.y|0)));let di=0;
+ for(let s=0;s<2*N-1;s++){for(let x=Math.max(0,s-N+1);x<=Math.min(s,N-1);x++){const y=s-x,g=G[y*N+x],p=P(x+.5,y+.5);if(p[0]<-90||p[0]>W+90||p[1]<-140*z||p[1]>H+60)continue;ground(g,x,y,t);stat(g,x,y)}
+  while(di<d.length&&(d[di].x|0)+(d[di].y|0)<=s)dyn(d[di++],t)}
+ while(di<d.length)dyn(d[di++],t)}
+loadCity(startCity());
+// ---- Bubbles ----
+const bubs=$("#bubs");function mkBubs(){bubs.innerHTML="";locs.forEach(l=>{const d=document.createElement("div");d.className="bub"+(l.t=="mission"?" m":"");d.innerHTML=`<button aria-label="${l.n}">${l.e}</button><i>${l.n}${l.sp?" · Sponsored":""}</i>`;d.firstChild.onclick=e=>{e.stopPropagation();openLoc(l)};l.el=d;bubs.append(d)})}
+function placeBubs(){locs.forEach(l=>{const p=P(l.x+.5,l.y+.5),imp=l.t=="game"||l.t=="mission"||l.t=="landmark"||l.sp,show=z>=.8||imp;l.el.style.display=show&&p[0]>-50&&p[0]<W+50&&p[1]>0&&p[1]<H+60?"block":"none";l.el.style.transform=`translate(${p[0]}px,${p[1]-((l.vh||30)*z)}px)`;l.el.classList.toggle("sel",S.sel==l);l.el.classList.toggle("feat",!!l.adFeat);if(l.adFeat||l.visual.bb)Ads.seen(l,l.el.style.display=="block")})}
+// ---- Camera / input ----
+function fly(x,y,zz){tgt={x,y,z:zz||Math.max(z,1.1)};if(reduce){cam.x=x;cam.y=y;z=tgt.z;tgt=null}}
+const ptr=new Map();let moved=0,pd=0;
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);moved=0;tgt=null;pd=pdist()});
+cv.addEventListener("pointermove",e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId),dx=e.clientX-o[0],dy=e.clientY-o[1];ptr.set(e.pointerId,[e.clientX,e.clientY]);moved+=Math.abs(dx)+Math.abs(dy);
+ if(ptr.size==1){cam.x-=(dx/(TW*z)+dy/(TH*z))/2;cam.y-=(dy/(TH*z)-dx/(TW*z))/2;clampCam()}else if(ptr.size==2){const d=pdist();if(pd)z=Math.min(2.2,Math.max(.45,z*d/pd));pd=d}});
+const up=e=>{if(ptr.size==1&&moved<8)tap(e.clientX,e.clientY);ptr.delete(e.pointerId);pd=0};
+cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",e=>{ptr.delete(e.pointerId)});
+cv.addEventListener("wheel",e=>{e.preventDefault();zoom(e.deltaY<0?1.1:.9)},{passive:false});
+function pdist(){const a=[...ptr.values()];return a.length<2?0:Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}
+function clampCam(){cam.x=Math.min(N,Math.max(0,cam.x));cam.y=Math.min(N,Math.max(0,cam.y))}
+function zoom(f){z=Math.min(2.2,Math.max(.45,z*f))}
+function tap(sx,sy){const dx=(sx-W/2)/(TW*z),dy=(sy-H/2)/(TH*z),x=Math.floor(cam.x+(dx+dy)/2),y=Math.floor(cam.y+(dy-dx)/2);if(x<0||y<0||x>=N||y>=N)return;const l=poi(x,y);if(l)return openLoc(l);closeCard();walkTo(x,y)}
+$("#zi").onclick=()=>zoom(1.25);$("#zo").onclick=()=>zoom(.8);$("#loc").onclick=()=>fly(av.x,av.y);
+// ---- UI helpers ----
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),1800)}
+function mod(h){$("#box").innerHTML=h;$("#mod").classList.add("open")}
+function close(){$("#mod").classList.remove("open")}
+$("#mod").onclick=e=>{if(e.target.id=="mod")close()};
+const lvl=()=>Math.floor(S.xp/100)+1;
+function cta(){const u=S.user;$("#cta").innerHTML=u?`<div class="row"><canvas id="cav" width="48" height="56" style="width:48px;height:56px"></canvas><div style="flex:1"><b>${u}</b> · LEVEL ${lvl()}<div class="row" style="flex-wrap:nowrap"><div class="xp"><b style="width:${S.xp%100}%"></b></div><span class="mut">${S.xp%100} / 100 XP</span></div></div><b>🪙 ${S.coins}</b></div><div class="row" style="margin-top:10px"><button class="big" id="go">CONTINUE WORLD</button></div>`
+:`<h2>Your world is waiting.</h2><p>Explore ${esc(CITY.name)}, play games, complete missions and discover the world.</p><div class="row"><button class="big" id="go">ENTER WORLD</button><button class="big s" id="su">SIGN UP FREE</button></div><div class="mut" style="margin-top:8px;font-size:12px">🧑 Create your character · <a href="#" id="ca" style="color:var(--b);font-weight:700">CREATE AVATAR</a></div>`;
+ $("#go").onclick=()=>{$("#cta").classList.add("hide");fly(av.x,av.y,1.3)};const s=$("#su");if(s){s.onclick=auth;$("#ca").onclick=e=>{e.preventDefault();auth()}}
+ $("#hdr").innerHTML=u?`<button class="pill" onclick="profile()">Lv ${lvl()} · 🪙${S.coins}</button>`:`<button class="btn" id="bLog">Log In</button><button class="btn pri" id="bSign">Sign Up</button>`;if(!u){$("#bLog").onclick=login;$("#bSign").onclick=auth}drawCav()}
+// ---- Avatar kit: reusable item catalog + renderer (no city/game knowledge) ----
+const AK={skin:["#ffe0bd","#f1c27d","#d9a066","#b87a4b","#8d5524","#5c3a1e"],hairStyles:["Short","Afro","Long","Bun","Bald"],hairColors:["#1b1b1b","#4a2c1a","#a0522d","#e6c34a","#8a5cf6","#e05a9c"],
+ outfits:[{n:"Tee",st:"tee",c:"#2f7bff",b:"#2b3050"},{n:"Hoodie",st:"hoodie",c:"#18c76f",b:"#2b3050"},{n:"Striped",st:"stripe",c:"#f4a261",b:"#3b4a6b"},{n:"Jersey",st:"jersey",c:"#e05a5a",b:"#222222"},{n:"Smart",st:"tee",c:"#f2f3fb",b:"#14172b"},{n:"Sunset",st:"hoodie",c:"#8a5cf6",b:"#4a2c6b"}],
+ accs:["None","Glasses","Cap","Headphones","Chain"],interests:["Music","Food","Games","Fashion","Tech","Sports","Travel","Art","Business"],
+ def(){return{skin:2,hair:0,hc:0,outfit:0,acc:0}},
+ clean(c){c=c||{};const m=(v,n)=>Math.max(0,Math.min(n-1,(+v)|0));return{skin:m(c.skin,AK.skin.length),hair:m(c.hair,AK.hairStyles.length),hc:m(c.hc,AK.hairColors.length),outfit:m(c.outfit,AK.outfits.length),acc:m(c.acc,AK.accs.length)}},
+ draw(g,x,y,s,c,bob){c=AK.clean(c);const sk=AK.skin[c.skin],o=AK.outfits[c.outfit],hc=AK.hairColors[c.hc];g.save();g.translate(x,y);g.scale(s,s);
+  g.fillStyle="#0004";g.beginPath();g.ellipse(0,0,11,4.5,0,0,7);g.fill();g.translate(0,bob||0);
+  g.fillStyle=o.b;g.fillRect(-6,-12,5,12);g.fillRect(1,-12,5,12);
+  g.fillStyle=hc;if(c.hair==1){g.beginPath();g.arc(0,-33,12.5,0,7);g.fill()}if(c.hair==2){g.beginPath();g.roundRect(-9.5,-39,19,24,7);g.fill()}
+  g.fillStyle=o.c;g.beginPath();g.roundRect(-8,-26,16,16,5);g.fill();
+  if(o.st=="stripe"){g.fillStyle="#fff9";for(let i=0;i<3;i++)g.fillRect(-8,-24+i*5,16,2)}
+  if(o.st=="hoodie"){g.strokeStyle="#0003";g.lineWidth=2;g.beginPath();g.arc(0,-26,6,0,3.14);g.stroke()}
+  if(o.st=="jersey"){g.fillStyle="#fff";g.font="bold 8px sans-serif";g.textAlign="center";g.fillText("10",0,-15)}
+  g.fillStyle=sk;g.fillRect(-10.5,-24,3,9);g.fillRect(7.5,-24,3,9);g.beginPath();g.arc(0,-33,8,0,7);g.fill();
+  g.fillStyle="#222";g.fillRect(-3.5,-34,1.8,2.4);g.fillRect(1.7,-34,1.8,2.4);
+  if(c.hair!=4){g.fillStyle=hc;g.beginPath();g.arc(0,-35,8.3,3.3,6.1);g.fill();if(c.hair==3){g.beginPath();g.arc(0,-44,4,0,7);g.fill()}}
+  const a=c.acc;g.lineWidth=1.4;
+  if(a==1){g.strokeStyle="#222";g.beginPath();g.arc(-3,-33,2.7,0,7);g.moveTo(5.7,-33);g.arc(3,-33,2.7,0,7);g.moveTo(-.3,-33);g.lineTo(.3,-33);g.stroke()}
+  if(a==2){g.fillStyle="#e05a5a";g.beginPath();g.arc(0,-34.5,8.8,3.14,6.28);g.fill();g.fillRect(2,-36,10,2.6)}
+  if(a==3){g.strokeStyle="#222";g.lineWidth=2;g.beginPath();g.arc(0,-33,9.4,3.14,6.28);g.stroke();g.fillStyle="#222";g.beginPath();g.arc(-9.4,-33,2.8,0,7);g.arc(9.4,-33,2.8,0,7);g.fill()}
+  if(a==4){g.strokeStyle="#ffd166";g.lineWidth=1.6;g.beginPath();g.arc(0,-26.5,4.5,0,3.14);g.stroke()}
+  g.restore()}};
+const Store={k:"lmw_profile",load(){try{return JSON.parse(localStorage.getItem(this.k))}catch(e){return null}},save(p){try{localStorage.setItem(this.k,JSON.stringify(p));localStorage.setItem("lmw_in","1")}catch(e){}},out(){try{localStorage.removeItem("lmw_in")}catch(e){}},inn(){try{return localStorage.getItem("lmw_in")=="1"}catch(e){return false}}};
+function persist(){if(S.user)Store.save({v:1,username:S.user,avatar:S.av,interests:S.interests,city:S.city,xp:S.xp,coins:S.coins,visited:[...S.visited],active:S.active,done:S.done,trivia:S.trivia,best:S.best})}
+function apply(p){S.user=p.username;S.av=AK.clean(p.avatar);S.interests=(p.interests||[]).filter(i=>AK.interests.includes(i)).slice(0,5);S.xp=+p.xp||0;S.coins=p.coins==null?100:+p.coins;S.visited=new Set(p.visited||[]);S.active=p.active||{};S.done=p.done||{};S.trivia=p.trivia;S.best=p.best||{};Server.use(S.user)}
+function restore(){const p=Store.load();if(p&&Store.inn())apply(p)}
+function login(){const p=Store.load();if(!p){toast("No saved character on this device");return editor("create")}apply(p);persist();close();cta();fly(av.x,av.y,1.3);toast("Welcome back, "+S.user)}
+function logout(){Store.out();S.user=null;S.av=null;S.xp=0;S.coins=100;S.visited=new Set();S.active={};S.done={};S.interests=[];S.trivia=0;S.best={};Server.use(null);close();cta();toast("Logged out")}
+function drawCav(){const c=$("#cav");if(c){const g=c.getContext("2d");g.clearRect(0,0,48,56);AK.draw(g,24,52,1.1,S.av,0)}}
+
+function auth(){editor("create")}
+function editor(mode){const create=mode!="edit",cfg=AK.clean(create?AK.def():S.av),ints=new Set(create?[]:S.interests);
+ const sec=(t,k,a,sw)=>`<b>${t}</b><div class="sw" data-k="${k}">${a.map((x,i)=>`<button data-i="${i}" class="${cfg[k]==i?"sel":""}" ${sw?`style="background:${x}" aria-label="${t} ${i+1}"`:""}>${sw?"":x}</button>`).join("")}</div>`;
+ mod(`<div id="ed"><h3>${create?"Create your character":"Edit character"}</h3><canvas id="pv" width="240" height="200" class="pv"></canvas>
+ <input id="un" placeholder="Username (3–14 letters, numbers, _)" maxlength="14" value="${create?"":S.user}" ${create?"":"disabled"}>
+ ${sec("Skin tone","skin",AK.skin,1)}${sec("Hairstyle","hair",AK.hairStyles)}${sec("Hair colour","hc",AK.hairColors,1)}${sec("Clothing","outfit",AK.outfits.map(o=>o.n))}${sec("Accessory","acc",AK.accs)}
+ <b>Interests (up to 5)</b><div class="sw">${AK.interests.map(i=>`<button data-int="${i}" class="${ints.has(i)?"sel":""}">${i}</button>`).join("")}</div>
+ <p class="mut" style="font-size:12px">City: ${CITY.name}. Only your username, look and interests are shown to others.</p>
+ <button class="big" style="width:100%" id="ok">${create?"START PLAYING":"SAVE CHARACTER"}</button></div>`);
+ const pv=()=>{const g=$("#pv").getContext("2d");g.clearRect(0,0,240,200);AK.draw(g,120,178,4,cfg,0)};pv();
+ $("#ed").onclick=e=>{const b=e.target.closest("button");if(!b||b.id=="ok")return;if(b.dataset.int){const i=b.dataset.int;if(!ints.has(i)&&ints.size>=5)return toast("Pick up to 5");ints.has(i)?ints.delete(i):ints.add(i);b.classList.toggle("sel",ints.has(i));return}
+  const p=b.parentElement;if(p.dataset.k){cfg[p.dataset.k]=+b.dataset.i;p.querySelectorAll("button").forEach(x=>x.classList.toggle("sel",x==b));pv()}};
+ $("#ok").onclick=()=>{const n=$("#un").value.trim();if(!/^[A-Za-z0-9_]{3,14}$/.test(n))return toast("Username: 3–14 letters, numbers or _");
+  S.user=n;S.av=AK.clean(cfg);S.interests=[...ints];if(create){S.trivia=0;S.best={}}Server.use(n);persist();close();closeCard();cta();fly(av.x,av.y,1.3);toast(create?"Welcome, "+n+"!":"Character saved")}}
+function need(){if(S.user)return true;toast("Sign up free to earn rewards");auth();return false}
+function award(xp,c,m){persist();cta();toast(`${m}  +${xp} XP · +${c} LifeCoins`)}
+function openLoc(l){S.sel=l;fly(l.x+.5,l.y+.5);const m=MISSIONS[l.mk];let acts=`<button class="big o" id="wp">WALK HERE</button><button class="big" id="ci">CHECK IN +10 XP</button>`,extra="";
+ if(l.t=="game"){const gd=Games.reg[l.game]||{};extra=`<div><b>Reward:</b> ${gd.rewardText}</div><div class="mut">Best score: ${(S.best||{})[l.game]||"—"}</div>`;acts=`<button class="big" id="pl">PLAY NOW</button>`}
+ if(l.mk){const mv=Prog.view(Prog.marker(l.mk));extra=Prog.card(mv);acts=`<button class="big ${mv.status=="claimable"?"":"o"}" id="ms">${mv.status=="claimable"?"CLAIM REWARD":"ALL MISSIONS"}</button>`}
+ if(l.biz){const bz=l.biz;extra=`<div class="row" style="flex-wrap:nowrap"><div class="logo-b" style="width:40px;height:40px;font-size:22px">${esc(bz.logo)}</div><div><b>${esc(bz.name)}</b><div class="mut">✓ Verified${bz.demo?" · Demo listing":""}</div></div></div>${bz.featured&&bz.featured[0]?`<div class="it" style="display:block;margin:6px 0"><b>${esc(bz.featured[0].title)}</b><small>${esc(bz.featured[0].text)}</small></div>`:""}`;acts=`<button class="big o" id="ci">CHECK IN</button><button class="big s" id="vb">STOREFRONT</button>`}
+ else if(l.t=="biz")acts=`<button class="big o" id="ci">CHECK IN</button><button class="big s" id="vb">LIST YOUR BUSINESS</button>`;
+ $("#card").innerHTML=`<div class="row"><b style="font-size:24px">${l.e}</b><div style="flex:1"><h3>${l.n}</h3><span class="mut">${l.d}</span></div>${l.sp?'<span class="tag">SPONSORED</span>':""}<button class="ico" style="background:#8883;color:inherit" id="x">✕</button></div><p style="margin:6px 0">${l.desc}</p>${extra}${Ads.cardHtml(l)}<div class="row" style="margin-top:8px">${acts}${Ads.cardActs(l)}${l.community?'<button class="big s" id="cm">OPEN COMMUNITY</button>':""}</div>`;
+ $("#card").classList.add("open");$("#cta").classList.add("hide");$("#x").onclick=closeCard;
+ const g=id=>document.getElementById(id);Ads.bind(l,g);if(g("cm"))g("cm").onclick=communityHub;if(g("wp"))g("wp").onclick=()=>{walkTo(l.x,l.y);toast("Walking…")};
+ if(g("ci"))g("ci").onclick=()=>{if(!need())return;Prog.checkin(l).then(()=>openLoc(l))};
+ if(g("ms"))g("ms").onclick=()=>{const mv=Prog.view(Prog.marker(l.mk));if(mv.status=="claimable")Prog.claim(mv.id).then(()=>openLoc(l));else missionsHub()};
+ if(g("pl"))g("pl").onclick=()=>Games.play(l.game);if(g("vb"))g("vb").onclick=()=>l.biz?bizProfile(l.biz.id):bizRegister()}
+function closeCard(){S.sel=null;$("#card").classList.remove("open");if(!ptr.size)$("#cta").classList.remove("hide")}
+
+// ---- Progression ----
+/* SIMULATED TRUSTED SERVER. Everything inside Server stands in for Postgres/Edge functions (see lifemindwurld_progression.sql).
+   The UI may only call Server.*; balances are derived from an append-only hash-chained ledger and are never assigned by the UI.
+   A browser demo cannot be truly secure: real protection comes from the SQL version. */
+const CAT=[
+{id:"d1",type:"daily",title:"Visit 3 Locations",desc:"Check in at 3 different places today.",goal:{k:"checkins",n:3},reward:{xp:40,c:10},period:"daily",marker:"daily"},
+{id:"d2",type:"daily",title:"Play a Game",desc:"Finish any game today.",goal:{k:"plays",n:1},reward:{xp:30,c:10},period:"daily"},
+{id:"d3",type:"daily",title:"Brain Boost",desc:"Complete City Trivia today.",goal:{k:"plays",game:"trivia",n:1},reward:{xp:50,c:15},period:"daily"},
+{id:"c1",type:"city",title:"{city} Explorer",desc:"Discover 5 landmarks.",goal:{k:"landmarks",n:5},reward:{xp:250,c:50},period:"once",marker:"explorer"},
+{id:"c2",type:"city",title:"District Hopper",desc:"Check in at places in 4 different districts.",goal:{k:"districts",n:4},reward:{xp:150,c:30},period:"once"},
+{id:"c3",type:"city",title:"{city} Local",desc:"Check in at 12 different places.",goal:{k:"checkins",n:12},reward:{xp:300,c:75},period:"once"},
+{id:"g1",type:"game",title:"Trivia Rookie",desc:"Complete City Trivia.",goal:{k:"plays",game:"trivia",n:1},reward:{xp:100,c:25},period:"once"},
+{id:"g2",type:"game",title:"Memory Rookie",desc:"Play Memory Match.",goal:{k:"plays",game:"memory",n:1},reward:{xp:100,c:25},period:"once"},
+{id:"g3",type:"game",title:"{city} Scavenger Hunt",desc:"Complete the {city} Scavenger Hunt.",goal:{k:"plays",game:"hunt",n:1},reward:{xp:150,c:40},period:"once"},
+{id:"g4",type:"game",title:"Trivia Whiz",desc:"Get 7 or more correct in City Trivia.",goal:{k:"plays",game:"trivia",xmin:7,n:1},reward:{xp:200,c:50},period:"once"},
+{id:"g5",type:"game",title:"Sharp Memory",desc:"Finish Memory Match in 12 moves or fewer.",goal:{k:"plays",game:"memory",xmax:12,n:1},reward:{xp:200,c:50},period:"once"},
+{id:"s1",type:"social",title:"Make a Friend",desc:"Add a friend. Needs the Community feature.",goal:{k:"social",n:1},reward:{xp:100,c:25},period:"once",locked:1},
+{id:"s2",type:"social",title:"Say Hello",desc:"Post in Community. Needs the Community feature.",goal:{k:"social",n:1},reward:{xp:50,c:10},period:"once",locked:1}];
+const Server=(()=>{const K="lmw_srv_",CAP=10,
+ RULES={trivia:{min:10,ok:r=>Number.isInteger(r.ok)&&r.ok>=0&&r.ok<=10&&r.score>=r.ok*100&&r.score<=r.ok*250,rw:r=>[Math.min(100,r.ok*10),Math.min(25,Math.floor(r.ok*2.5))],x:r=>r.ok},
+  memory:{min:12,ok:r=>Number.isInteger(r.moves)&&r.moves>=8&&r.moves<=300&&r.score>=100&&r.score<=1000,rw:r=>[Math.max(30,Math.min(100,100-(r.moves-8)*7)),Math.max(5,Math.min(25,25-(r.moves-8)*2))],x:r=>r.moves},
+  hunt:{min:15,ok:r=>r.score>=500&&r.score<=1000,rw:()=>[120,30],x:()=>0}};
+ let led=[],ev=[],pend={},user=null,bad=false;const self={now:()=>Date.now()};
+ const day=t=>cityDay(t==null?self.now():t);
+ const hs=t=>{let a=0xdeadbeef,b=0x41c6ce57;for(let i=0,c;i<t.length;i++){c=t.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(16)};
+ const line=e=>[e.seq,e.ts,e.key,e.src,e.ref,e.city,e.xp,e.c].join("|");
+ const sv=()=>{try{localStorage.setItem(K+user,JSON.stringify({led,ev}))}catch(x){}};
+ const verify=l=>{let p="0";for(let i=0;i<l.length;i++){const e=l[i];if(e.prev!=p||e.seq!=i+1||e.xp<0||e.c<0||e.hash!=hs(p+"|"+line(e)))return false;p=e.hash}return true};
+ const add=(key,src,ref,xp,c)=>{if(!user||bad||led.some(e=>e.key==key))return null;const p=led.length?led[led.length-1].hash:"0",e={seq:led.length+1,ts:self.now(),key,src,ref,city:S.city,xp,c,prev:p};e.hash=hs(p+"|"+line(e));led.push(Object.freeze(e));return e};
+ const bal=()=>({xp:led.reduce((a,e)=>a+e.xp,0),coins:led.reduce((a,e)=>a+e.c,0)}),lv=()=>Math.floor(bal().xp/100)+1;
+ const levelUps=()=>{for(let n=2;n<=lv();n++)add("lvl:"+n,"level",n,0,20)};
+ const per=m=>(m.period=="daily"?day():m.period=="event"?"ev":"all")+(S.city=="lagos"?"":":"+S.city),tgt=m=>m.goal.k=="refs"?m.goal.refs.length:(m.goal.n||1),loc=id=>locs.find(l=>l.id==id)||{};
+ const prog=m=>{const g=m.goal,es=ev.filter(e=>(e.city||"lagos")==S.city&&(m.period=="daily"?e.day==day():m.period=="event"?(e.ts>=m.window[0]&&e.ts<=m.window[1]):true)),ci=es.filter(e=>e.type=="checkin"),
+  gm=es.filter(e=>e.type=="game"&&(!g.game||e.ref==g.game)&&(g.xmin==null||e.x>=g.xmin)&&(g.xmax==null||e.x<=g.xmax));
+  switch(g.k){case"checkins":return new Set(ci.map(e=>e.ref)).size;case"landmarks":return new Set(ci.filter(e=>loc(e.ref).cat=="landmark").map(e=>e.ref)).size;case"districts":return new Set(ci.filter(e=>loc(e.ref).district).map(e=>loc(e.ref).district)).size;case"refs":return g.refs.filter(r=>ci.some(e=>e.ref==r)).length;case"plays":return gm.length;default:return 0}};
+ const status=m=>{if(m.locked)return"locked";const t=self.now();if(m.window&&t<m.window[0])return"upcoming";if(led.some(e=>e.key==="claim:"+m.id+":"+per(m)))return"claimed";if(prog(m)>=tgt(m))return"claimable";if(m.window&&t>m.window[1])return"ended";return"active"};
+ const wait=f=>new Promise(r=>setTimeout(()=>r(f()),40));
+ Object.assign(self,{
+  use(u){user=u||null;led=[];ev=[];pend={};bad=false;if(!user)return;let d=null;try{d=JSON.parse(localStorage.getItem(K+user))}catch(x){}
+   if(d&&d.led){if(verify(d.led)){led=d.led.map(e=>Object.freeze({...e}));ev=d.ev||[]}else bad=true}
+   add("welcome","welcome","signup",0,100);levelUps();if(!bad)sv()},
+  bal,visited:()=>new Set(ev.filter(e=>e.type=="checkin").map(e=>e.ref)),entries:()=>led.slice(),events:()=>ev.slice(),
+  mission(m){const t=x=>String(x).replace(/\{city\}/g,CITY.name);return{...m,title:t(m.title),desc:t(m.desc),progress:Math.min(prog(m),tgt(m)),target:tgt(m),status:status(m)}},
+  checkin(id,pos){return wait(()=>{const l=locs.find(x=>x.id==id);if(!user||bad||!l)return{ok:false,err:"Sign in required"};
+   if(!pos||Math.hypot(pos.x-l.x-.5,pos.y-l.y-.5)>3.5)return{ok:false,err:"Walk closer to check in"};
+   if(ev.some(e=>e.type=="checkin"&&e.ref==id&&e.day==day()))return{ok:false,err:"Already checked in today"};
+   ev.push({type:"checkin",ref:id,v:0,x:0,ts:self.now(),day:day(),city:S.city});const r=add("checkin:"+id,"checkin",id,10,2);levelUps();sv();return{ok:true,xp:r?10:0,c:r?2:0}})},
+  claim(id){return wait(()=>{const m=CAT.find(x=>x.id==id);if(!user||bad)return{ok:false,err:"Sign in required"};if(!m)return{ok:false,err:"Unknown mission"};const st=status(m);
+   if(st!="claimable")return{ok:false,err:st=="claimed"?"Already claimed":"Not ready to claim"};
+   const e=add("claim:"+id+":"+per(m),"mission",id,m.reward.xp,m.reward.c);if(!e)return{ok:false,err:"Already claimed"};levelUps();sv();return{ok:true,xp:m.reward.xp,c:m.reward.c}})},
+  startGame(g){if(!user||bad||!RULES[g])return null;const sid=hs(user+g+self.now()+Math.random());pend[sid]={g,t0:self.now()};return sid},
+  gameDone(g,r,sid){return wait(()=>{const p=pend[sid];delete pend[sid];const R=RULES[g],no=n=>({ok:false,xp:0,c:0,note:n});
+   if(!user||bad||!p||p.g!=g||!R)return no("Result rejected: invalid or already used session");if((self.now()-p.t0)/1000<R.min)return no("Result rejected: finished too fast");if(!R.ok(r||{}))return no("Result rejected: implausible score");
+   ev.push({type:"game",ref:g,v:r.score,x:R.x(r),ts:self.now(),day:day(),city:S.city});let xp=0,c=0,note="";
+   if(led.filter(e=>e.src=="game"&&day(e.ts)==day()).length>=CAP)note="Daily reward limit reached ("+CAP+" rewarded plays)";else{[xp,c]=R.rw(r);add("game:"+sid,"game",g,xp,c)}
+   levelUps();sv();return{ok:true,xp,c,note}})},
+  board(sc){if(!user)return null;return{n:user,me:1,xp:led.filter(e=>sc=="global"||e.city==S.city).reduce((a,e)=>a+e.xp,0)}}});
+ Object.defineProperty(self,"tampered",{get:()=>bad});return self})();
+Object.defineProperties(S,{xp:{get:()=>Server.bal().xp,set(){},configurable:true},coins:{get:()=>Server.bal().coins,set(){},configurable:true},visited:{get:()=>Server.visited(),set(){},configurable:true}});
+const TYPES=[["daily","Daily"],["city","City"],["game","Games"],["exploration","Explore"],["social","Social"],["event","Events"],["sponsored","Sponsored"],["ach","Badges"]];
+const STAT={active:"In progress",claimable:"Ready!",claimed:"Claimed ✓",locked:"Coming soon",upcoming:"Upcoming",ended:"Ended"};
+const Prog={view:id=>Server.mission(CAT.find(m=>m.id==id)),marker:k=>(CAT.find(m=>m.marker==k)||{}).id,
+ card(v,btn){const pc=Math.round(v.progress/v.target*100);return`<div class="it" style="display:block"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>${v.title}</b>${v.sp?'<span class="tag" style="background:#18c76f">SPONSORED</span>':""}<span class="tag" style="background:${v.status=="claimable"?"#18c76f":v.status=="claimed"?"#5b6078":"#8a5cf6"}">${STAT[v.status]}</span></div><small>${v.desc}${v.sp?" · by "+esc(v.sponsor):""}</small><div class="row" style="flex-wrap:nowrap;margin:6px 0"><div class="xp"><b style="width:${pc}%"></b></div><span>${v.progress}/${v.target}</span></div><div class="row" style="justify-content:space-between"><b>+${v.reward.xp} XP · +${v.reward.c} LifeCoins</b>${btn||""}</div></div>`},
+ after(prev,m,xp,c){award(xp,c,m);if(lvl()>prev)setTimeout(()=>toast("⬆ LEVEL UP! You are level "+lvl()),1700)},
+ claim(id){const p=lvl();return Server.claim(id).then(r=>{if(r.ok)Prog.after(p,"Mission claimed!",r.xp,r.c);else toast(r.err);return r})},
+ checkin(l){const p=lvl();return Server.checkin(l.id,{x:av.x,y:av.y}).then(r=>{if(!r.ok)return toast(r.err);Prog.after(p,r.xp?"Checked in!":"Checked in (XP is once per place)",r.xp,r.c)})},
+ startGame:id=>Server.startGame(id),
+ gameDone(id,r,sid){const p=lvl();return Server.gameDone(id,r,sid).then(x=>{if(x.xp||x.c)Prog.after(p,"Reward earned",x.xp,x.c);return x})}};
+const ACH=[{b:"🌱",n:"Newcomer",d:"Create your character",p:()=>[S.user?1:0,1]},{b:"👣",n:"First Steps",d:"Check in at a location",p:()=>[S.visited.size,1]},{b:"🧭",n:"Explorer",d:"Check in at 3 locations",p:()=>[S.visited.size,3]},
+ {b:"🧠",n:"Trivia Whiz",d:"Get 7+ correct in City Trivia",p:()=>[Server.events().some(e=>e.type=="game"&&e.ref=="trivia"&&e.x>=7)?1:0,1]},{b:"🎮",n:"Game Master",d:"Play all 3 games",p:()=>[new Set(Server.events().filter(e=>e.type=="game").map(e=>e.ref)).size,3]},
+ {b:"⭐",n:"Mission Master",d:"Claim 3 missions",p:()=>[Server.entries().filter(e=>e.src=="mission").length,3]},{b:"🏆",n:"Level 5",d:"Reach level 5",p:()=>[lvl(),5]},{b:"🪙",n:"Collector",d:"Hold 500 LifeCoins",p:()=>[S.coins,500]}];
+const BADGES=ACH.map(a=>[a.b,a.n,()=>{const[n,t]=a.p();return n>=t}]);
+const NOTE='<p class="mut" style="font-size:11px">LifeCoins are virtual entertainment points only. They are not cash, not cryptocurrency, and cannot be withdrawn.</p>';
+let mTab="daily";
+function missionsHub(tab){if(tab)mTab=tab;if(!S.user){mod(`<h3>⭐ Missions</h3><p class="mut">Create your character to track missions and earn rewards.</p><button class="big" style="width:100%" id="p2">SIGN UP FREE</button>`);$("#p2").onclick=auth;return}
+ const chips=TYPES.map(t=>`<button class="${mTab==t[0]?"sel":""}" data-tab="${t[0]}">${t[1]}</button>`).join("");let body;
+ if(mTab=="ach")body=ACH.map(a=>{const[n,t]=a.p();return`<div class="it" style="opacity:${n>=t?1:.55}"><span style="font-size:26px">${a.b}</span><span style="flex:1"><b>${a.n}</b><small>${a.d} · ${Math.min(n,t)}/${t}</small></span>${n>=t?"✓":""}</div>`}).join("");
+ else body=CAT.filter(m=>m.type==mTab&&(mTab!="sponsored"||Ads.shown(m))).map(m=>{const v=Server.mission(m);return Prog.card(v,v.status=="claimable"?`<button class="big" style="flex:0 0 auto;padding:8px 16px" data-claim="${m.id}">CLAIM</button>`:"")}).join("");
+ mod(`<h3>⭐ Missions & Badges</h3><div class="sw">${chips}</div>${body}${NOTE}`);
+ document.querySelectorAll("#box [data-tab]").forEach(b=>b.onclick=()=>missionsHub(b.dataset.tab));
+ document.querySelectorAll("#box [data-claim]").forEach(b=>b.onclick=()=>{b.disabled=true;Prog.claim(b.dataset.claim).then(()=>missionsHub())})}
+function walletHub(){if(!S.user)return profile();const es=Server.entries().slice(-15).reverse();
+ mod(`<h3>🪙 Wallet</h3><div class="row" style="justify-content:space-between"><b style="font-size:20px">${S.coins} LifeCoins</b><b>${S.xp} XP · Level ${lvl()}</b></div>${NOTE}<b>Reward ledger</b> <small class="mut">append-only · ${Server.tampered?"INTEGRITY CHECK FAILED":"verified"} · demo ledger stored in this browser</small>`+es.map(e=>`<div class="it" style="display:block"><b>#${e.seq} ${e.src}</b> · ${e.ref}<small>+${e.xp} XP · +${e.c} LifeCoins · ${new Date(e.ts).toLocaleString()}</small></div>`).join(""))}
+const SAMPLE=[["Sample_Ada",1850,900],["Sample_Kofi",1320,1320],["Sample_Lena",980,0],["Sample_Tariq",640,640],["Sample_Mei",410,0]];
+function boardHub(sc){sc=sc||"global";const me=Server.board(sc),rows=SAMPLE.map(r=>({n:r[0],xp:sc=="global"?r[1]:r[2],demo:1})).filter(r=>r.xp>0);if(me)rows.push(me);rows.sort((a,b)=>b.xp-a.xp);
+ mod(`<h3>🏅 Leaderboard</h3><div class="sw"><button class="${sc=="global"?"sel":""}" data-b="global">Global</button><button class="${sc=="city"?"sel":""}" data-b="city">${CITY.name}</button></div>`+rows.map((r,i)=>`<div class="it" style="${r.me?"outline:2px solid var(--p)":""}"><b style="width:26px">${i+1}</b><span style="flex:1">${r.n}${r.demo?' <span class="tag" style="background:#8a8fa8">SAMPLE</span>':""}${r.me?" (you)":""}</span><b>${r.xp} XP</b></div>`).join("")+`<p class="mut" style="font-size:11px">SAMPLE rows are placeholders. In production, rankings are computed from the reward ledger in the database (see the SQL file). Only username, avatar, level and XP are shown.</p>`);
+ document.querySelectorAll("#box [data-b]").forEach(b=>b.onclick=()=>boardHub(b.dataset.b))}
+// ---- Games: reusable framework. A game = {id,name,e,desc,rewardText,reward(result),start(host,api)} ----
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const Games={reg:{},cur:null,tm:null,hunt:null,endH:null,
+ add(g){this.reg[g.id]=g;return this},
+ shut(){clearInterval(this.tm);if(this.cur&&this.cur.stop)this.cur.stop();this.cur=null;$("#gm").classList.remove("open");if(!$("#card").classList.contains("open")&&!this.hunt)$("#cta").classList.remove("hide")},
+ play(id){const g=this.reg[id];if(!g||!need())return;close();closeCard();if(this.endH)this.endH();clearInterval(this.tm);this.cur=g;this.sid=Prog.startGame(g.id);$("#gmt").textContent=g.e+" "+g.name;$("#gms").innerHTML="";$("#gmb").innerHTML="";$("#gm").classList.add("open");
+  g.start($("#gmb"),{stat:h=>{$("#gms").innerHTML=h},tick:fn=>{clearInterval(this.tm);this.tm=setInterval(fn,1000)},finish:r=>this.finish(g,r)})},
+ finish(g,r){clearInterval(this.tm);Prog.gameDone(g.id,r,this.sid).then(rw=>{if(rw.note)r.detail=[...(r.detail||[]),rw.note];this.show(g,r,rw)})},
+ show(g,r,rw){const b=S.best=S.best||{},nb=r.score>(b[g.id]||0);if(nb)b[g.id]=r.score;persist();
+  $("#gm").classList.add("open");$("#gms").innerHTML="";$("#gmb").innerHTML=`<div class="res"><div style="font-size:54px">${g.e}</div><h2>${r.title||"Game complete!"}</h2><div class="big-n">${r.score}</div><div class="mut" style="color:#a7abc8">SCORE${nb?" · NEW BEST!":" · Best "+b[g.id]}</div><div class="det">${(r.detail||[]).map(d=>`<div>${d}</div>`).join("")}</div><div class="rew">+${rw.xp} XP · +${rw.c} LifeCoins</div><div class="row"><button class="big" id="ga">PLAY AGAIN</button><button class="big o" id="gx">BACK TO CITY</button></div></div>`;
+  $("#ga").onclick=()=>this.play(g.id);$("#gx").onclick=()=>this.shut()}};
+$("#gmx").onclick=()=>Games.shut();
+const TQ=()=>[...TRIVIA_WORLD,...(CITY.trivia||[])];
+Games.add({id:"trivia",name:"City Trivia",e:"🧠",desc:"10 questions, 15 seconds each. Faster answers score more.",rewardText:"Up to +100 XP · +25 LifeCoins",
+ reward:r=>({xp:Math.min(100,r.ok*10),c:Math.min(25,Math.floor(r.ok*2.5))}),
+ start(h,api){const qs=shuf(TQ()).slice(0,10).map(q=>({q:q[0],o:shuf(q[1].map((t,i)=>[t,i==q[2]]))}));let i=0,ok=0,score=0,left=15,lock=0;
+  const stat=()=>api.stat(`<span class="pill">Q ${Math.min(i+1,10)}/10</span><span class="pill">⭐ ${score}</span><span class="pill">⏱ ${left}</span>`);
+  const ans=j=>{if(lock)return;lock=1;const q=qs[i],c=q.o.findIndex(x=>x[1]),bs=h.querySelectorAll(".opt");bs[c].classList.add("ok");if(j>=0&&j!=c)bs[j].classList.add("no");if(j==c){ok++;score+=100+left*10}stat();setTimeout(()=>{i++;show()},j<0?1100:900)};
+  const show=()=>{if(i>=10){if(ok>=7)S.trivia=1;return api.finish({score,ok,title:ok>=7?"Trivia champion!":"Good effort!",detail:["Correct: "+ok+"/10","Speed bonus included in score"]})}
+   left=15;lock=0;stat();const q=qs[i];h.innerHTML=`<div class="tb"><i id="tbar"></i></div><h2 style="margin:6px 0 14px">${q.q}</h2>${q.o.map((o,j)=>`<button class="opt" data-j="${j}">${o[0]}</button>`).join("")}`;h.querySelectorAll(".opt").forEach(b=>b.onclick=()=>ans(+b.dataset.j))};
+  api.tick(()=>{if(lock||i>=10)return;left--;stat();const b=$("#tbar");if(b)b.style.width=left/15*100+"%";if(left<=0)ans(-1)});show()}});
+Games.add({id:"memory",name:"Memory Match",e:"🃏",desc:"Flip cards and find all 8 pairs in as few moves as you can.",rewardText:"Up to +100 XP · +25 LifeCoins",
+ reward:r=>({xp:Math.max(30,Math.min(100,100-(r.moves-8)*7)),c:Math.max(5,Math.min(25,25-(r.moves-8)*2))}),
+ start(h,api){const ic=["🍕","🎵","🏥","🛍","🏛","🌴","🏆","🚕"],cards=shuf([...ic,...ic]);let up=[],moves=0,found=0,secs=0,lock=0,go=0;
+  const stat=()=>api.stat(`<span class="pill">Moves ${moves}</span><span class="pill">⏱ ${secs}s</span>`);
+  h.innerHTML=`<div class="mg">${cards.map((c,i)=>`<button class="mc" data-i="${i}" aria-label="Card ${i+1}"></button>`).join("")}</div>`;const bs=h.querySelectorAll(".mc");stat();api.tick(()=>{if(go){secs++;stat()}});
+  bs.forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(lock||b.classList.contains("up")||b.classList.contains("ok"))return;go=1;b.classList.add("up");b.textContent=cards[i];up.push(i);
+   if(up.length==2){moves++;stat();const[a,c]=up;if(cards[a]==cards[c]){[a,c].forEach(k=>{bs[k].classList.remove("up");bs[k].classList.add("ok")});up=[];if(++found==8)setTimeout(()=>api.finish({score:Math.max(100,1000-moves*25-secs*2),moves,title:"All pairs found!",detail:["Moves: "+moves,"Time: "+secs+"s"]}),500)}
+    else{lock=1;setTimeout(()=>{[a,c].forEach(k=>{bs[k].classList.remove("up");bs[k].textContent=""});up=[];lock=0},750)}}})}});
+Games.add({id:"hunt",name:"City Scavenger Hunt",e:"🧭",desc:"Follow clues and walk your avatar to 5 places across the city.",rewardText:"+120 XP · +30 LifeCoins",reward:()=>({xp:120,c:30}),
+ start(h,api){h.innerHTML=`<div class="res"><div style="font-size:54px">🧭</div><h2>Scavenger Hunt</h2><p style="color:#c9ccea">Find 5 places from clues. Walk your avatar next to each one to discover it. Tap a clue to see its district.</p><div class="row"><button class="big" id="hs">START HUNT</button></div></div>`;
+  $("#hs").onclick=()=>{const pool=shuf(locs.filter(l=>l.t!="mission"&&l.t!="game")).slice(0,5),found=new Set(),t0=Date.now(),hud=$("#hunt"),secs=()=>Math.floor((Date.now()-t0)/1000),fmt=n=>(n/60|0)+":"+String(n%60).padStart(2,"0");let ht;
+   const end=()=>{clearInterval(ht);Games.hunt=null;hud.style.display="none";if(!$("#card").classList.contains("open"))$("#cta").classList.remove("hide")};
+   const render=()=>{hud.style.display="block";hud.innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>🧭 Hunt ${found.size}/5 · <span id="hts">${fmt(secs())}</span></b><button class="pill" id="hq" style="background:#e05a5a">Quit</button></div><div class="row" style="margin-top:6px">${pool.map(l=>`<button class="pill ${found.has(l.id)?"on":"w"}" data-h="${l.id}">${found.has(l.id)?"✓ "+l.n:"? A "+l.cat+" place in "+l.d}</button>`).join("")}</div>`;
+    $("#hq").onclick=end;hud.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const l=pool.find(x=>x.id==b.dataset.h);if(found.has(l.id))fly(l.x+.5,l.y+.5);else{const d=CITY.districts.find(x=>x.id==l.district);fly(d.center[0]+.5,d.center[1]+.5,1)}})};
+   Games.hunt={check(){pool.forEach(l=>{if(!found.has(l.id)&&Math.hypot(av.x-l.x-.5,av.y-l.y-.5)<1.8){found.add(l.id);toast("Discovered "+l.n+"!");render()}});if(found.size==pool.length){const n=secs();end();api.finish({score:500+Math.max(0,500-n*2),title:"Hunt complete!",detail:["Found "+pool.length+"/"+pool.length+" places",...pool.map(l=>"✓ "+l.n),"Time "+fmt(n)]})}}};
+   Games.endH=end;ht=setInterval(()=>{const e=$("#hts");if(e)e.textContent=fmt(secs())},1000);render();$("#gm").classList.remove("open");closeCard();$("#cta").classList.add("hide")}}});
+function gamesHub(){mod(`<h3>🎮 Games</h3>`+Object.values(Games.reg).map(g=>`<div class="it" style="display:block"><div style="display:flex;gap:10px;align-items:center"><span style="font-size:30px">${g.e}</span><span style="flex:1"><b>${g.name}</b><small>${g.desc}</small><small>${g.rewardText} · Best ${(S.best||{})[g.id]||"—"}</small></span></div>${Ads.challengeHtml(g.id)}<div class="row" style="margin-top:8px"><button class="big" data-p="${g.id}">PLAY NOW</button><button class="big o" data-f="${g.id}">FIND IN CITY</button></div></div>`).join(""));
+ document.querySelectorAll("#box [data-p]").forEach(b=>b.onclick=()=>Games.play(b.dataset.p));document.querySelectorAll("#box [data-f]").forEach(b=>b.onclick=()=>{close();const gl=locs.find(l=>l.game==b.dataset.f);if(gl)openLoc(gl);else toast("This game isn’t in this city yet")});
+ document.querySelectorAll("#box [data-claim]").forEach(b=>b.onclick=()=>{b.disabled=true;Prog.claim(b.dataset.claim).then(()=>gamesHub())})}
+// ---- Social ----
+/* SIMULATED server side of the social system (rules, rate limits, blocks, reports, moderation). Production: lifemindwurld_social.sql.
+   No other real players exist in this prototype, so a few clearly labelled SAMPLE profiles let you try friend flows. They never post or reply. */
+const RX=["👍","❤","😂","🎉"],REPORT_REASONS=[["spam","Spam"],["harassment","Harassment or bullying"],["hate","Hate or discrimination"],["inappropriate","Inappropriate content"],["scam","Scam or fake business"],["other","Something else"]];
+const SAMPLE_USERS=[{n:"Sample_Ada",lv:6,xp:540,city:"lagos",int:["Music","Food","Art"],bd:["🌱","🧭","⭐"],av:{skin:3,hair:2,hc:1,outfit:5,acc:3}},{n:"Sample_Kofi",lv:3,xp:230,city:"lagos",int:["Games","Tech"],bd:["🌱","👣"],av:{skin:4,hair:1,hc:0,outfit:3,acc:0}},{n:"Sample_Lena",lv:2,xp:120,city:"lagos",int:["Travel","Fashion"],bd:["🌱"],av:{skin:0,hair:3,hc:3,outfit:2,acc:1}},{n:"Sample_Tariq",lv:4,xp:380,city:"lagos",int:["Sports","Business"],bd:["🌱","🧠"],av:{skin:2,hair:4,hc:0,outfit:4,acc:2}}];
+const Social=(()=>{const K="lmw_social_v1",DAY=864e5,HR=36e5;let st={fr:[],posts:[],rep:[],blk:[],res:{},aud:[],mem:{},pri:{}},adminOn=false;
+ try{const d=JSON.parse(localStorage.getItem(K));if(d)st={...st,...d}}catch(e){}
+ const sv=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}},self={now:()=>Date.now()},uid=p=>p+self.now().toString(36)+Math.random().toString(36).slice(2,6),no=e=>({ok:false,err:e}),yes=x=>({ok:true,...x});
+ const me=()=>S.user,samp=n=>SAMPLE_USERS.find(u=>u.n==n),exists=n=>!!samp(n)||(!!n&&n==me())||st.posts.some(p=>p.au==n);
+ const blocked=(a,b)=>st.blk.some(x=>(x.a==a&&x.b==b)||(x.a==b&&x.b==a)),pair=(a,b)=>st.fr.find(f=>(f.a==a&&f.b==b)||(f.a==b&&f.b==a));
+ const LINK=/https?:|www\.|\b[a-z0-9-]+\.(com|net|org|io|co|ng|uk|app|xyz|me)\b|@\w|\d[\d\s().-]{7,}\d/i,BANNED=[];   // BANNED: configurable word list, empty by default
+ const clean=(t,max)=>{t=String(t||"").replace(/\s+/g," ").trim();if(!t)return{e:"Write something first"};if(t.length>max)return{e:"Keep it under "+max+" characters"};if(LINK.test(t))return{e:"Links, @mentions, email addresses and phone numbers aren't allowed"};if(BANNED.length&&new RegExp("\\b("+BANNED.join("|")+")\\b","i").test(t))return{e:"That text isn't allowed"};return{t}};
+ const restr=u=>{const r=st.res[u]||{};return r.susp?"Your account is suspended from community features":r.mute>self.now()?"You are muted until "+new Date(r.mute).toLocaleString():""};
+ const gate=()=>!me()?"Sign in required":restr(me());
+ const findP=id=>st.posts.find(p=>p.id==id),audit=(a,t,i,x)=>{st.aud.push({at:self.now(),by:x||"admin",a,t,i});if(st.aud.length>500)st.aud.splice(0,50)};
+ const setSt=(type,id,v,by)=>{if(type=="post"){const p=findP(id);if(p)p.st=v}else{const[pid,cid]=id.split("/"),p=findP(pid),c=p&&p.cm.find(x=>x.id==cid);if(c)c.st=v}audit(v,type,id,by)};
+ Object.assign(self,{
+  profile(n){if(!n||blocked(me(),n))return null;const u=samp(n);if(u)return{...u,sample:1};if(n==me())return{n,lv:lvl(),xp:S.xp,city:S.city,int:S.interests||[],bd:BADGES.filter(b=>b[2]()).map(b=>b[0]),av:S.av||AK.def(),self:1};return st.posts.some(p=>p.au==n)?{n,lv:"–",xp:0,city:S.city,int:[],bd:[],av:AK.def()}:null},
+  avOf:n=>(samp(n)||{}).av||(n==me()?S.av:null)||AK.def(),
+  rel(n){const f=pair(me(),n);if(n==me())return"self";if(!f||f.st=="rejected")return"none";if(f.st=="accepted")return"friends";return f.a==me()?"out":"in"},
+  relId:n=>(pair(me(),n)||{}).id,
+  lists(){const m=me();return{inc:st.fr.filter(f=>f.st=="pending"&&f.b==m),out:st.fr.filter(f=>f.st=="pending"&&f.a==m),frs:st.fr.filter(f=>f.st=="accepted"&&(f.a==m||f.b==m))}},
+  req(to){const e=gate();if(e)return no(e);if(to==me()||!exists(to))return no("Player not found");if(blocked(me(),to))return no("You can't send a request to this player");if(st.pri[to]=="nobody")return no("This player isn't accepting requests");
+   const f=pair(me(),to);if(f&&f.st!="rejected")return no(f.st=="accepted"?"Already friends":"A request already exists");if(f&&self.now()-f.at<7*DAY)return no("This request was declined recently");
+   if(st.fr.filter(x=>x.st=="pending"&&x.a==me()).length>=20)return no("Too many pending requests");if(f)st.fr.splice(st.fr.indexOf(f),1);st.fr.push({id:uid("f"),a:me(),b:to,st:"pending",at:self.now()});sv();return yes({})},
+  respond(id,accept){const f=st.fr.find(x=>x.id==id);if(!f||f.st!="pending"||f.b!=me())return no("Request not found");if(accept){f.st="accepted";f.at=self.now()}else{f.st="rejected";f.at=self.now()}sv();return yes({})},
+  cancel(id){const i=st.fr.findIndex(x=>x.id==id&&x.st=="pending"&&x.a==me());if(i<0)return no("Request not found");st.fr.splice(i,1);sv();return yes({})},
+  unfriend(id){const i=st.fr.findIndex(x=>x.id==id&&x.st=="accepted"&&(x.a==me()||x.b==me()));if(i<0)return no("Friend not found");st.fr.splice(i,1);sv();return yes({})},
+  simIncoming(n){if(!DEMO_ADMIN||!samp(n))return no("Demo only");if(st.pri[me()]=="nobody")return no("You are not accepting requests");if(pair(n,me()))return no("A request already exists");st.fr.push({id:uid("f"),a:n,b:me(),st:"pending",at:self.now()});sv();return yes({})},
+  simAccept(id){const f=st.fr.find(x=>x.id==id&&x.st=="pending"&&x.a==me());if(!DEMO_ADMIN||!f||!samp(f.b))return no("Demo only");f.st="accepted";sv();return yes({})},
+  block(n){const e=gate();if(e&&!me())return no(e);if(n==me()||!exists(n))return no("Player not found");if(!st.blk.some(x=>x.a==me()&&x.b==n))st.blk.push({a:me(),b:n,at:self.now()});st.fr=st.fr.filter(f=>!((f.a==me()&&f.b==n)||(f.a==n&&f.b==me())));sv();return yes({})},
+  unblock(n){st.blk=st.blk.filter(x=>!(x.a==me()&&x.b==n));sv();return yes({})},blocks:()=>st.blk.filter(x=>x.a==me()).map(x=>x.b),
+  setPri(v){st.pri[me()]=v=="nobody"?"nobody":"everyone";sv()},pri:()=>st.pri[me()]||"everyone",
+  joined:()=>!!st.mem[me()+":"+S.city],join(){const e=gate();if(e)return no(e);st.mem[me()+":"+S.city]=1;sv();return yes({})},leave(){delete st.mem[me()+":"+S.city];sv()},
+  post(text){const e=gate();if(e)return no(e);if(!self.joined())return no("Join the community first");const c=clean(text,280);if(c.e)return no(c.e);const mine=st.posts.filter(p=>p.au==me());
+   if(mine.filter(p=>self.now()-p.at<HR).length>=5)return no("Slow down: 5 posts per hour");if(mine.filter(p=>self.now()-p.at<DAY).length>=20)return no("Daily post limit reached");if(mine.some(p=>p.t==c.t&&self.now()-p.at<6e5))return no("You already posted that");
+   const p={id:uid("p"),au:me(),city:S.city,t:c.t,at:self.now(),st:"visible",rx:{},cm:[]};st.posts.push(p);sv();return yes({id:p.id})},
+  comment(pid,text){const e=gate();if(e)return no(e);const p=findP(pid);if(!p||p.st!="visible"||blocked(me(),p.au))return no("Post not available");if(!st.mem[me()+":"+p.city])return no("Join the community first");const c=clean(text,140);if(c.e)return no(c.e);
+   if(st.posts.reduce((n,x)=>n+x.cm.filter(k=>k.au==me()&&self.now()-k.at<HR).length,0)>=20)return no("Slow down: 20 comments per hour");p.cm.push({id:uid("c"),au:me(),t:c.t,at:self.now(),st:"visible"});sv();return yes({})},
+  react(pid,em){if(!me())return no("Sign in required");const p=findP(pid);if(!p||p.st!="visible"||blocked(me(),p.au)||!RX.includes(em))return no("Can't react");if(p.rx[me()]==em)delete p.rx[me()];else p.rx[me()]=em;sv();return yes({})},
+  del(type,id){const[pid,cid]=id.split("/"),p=findP(pid),o=type=="post"?p:p&&p.cm.find(x=>x.id==cid);if(!o||o.au!=me())return no("Not yours");o.st="deleted";sv();return yes({})},
+  feed(){const m=me();return st.posts.filter(p=>p.city==S.city&&p.st=="visible"&&!blocked(m,p.au)).sort((a,b)=>b.at-a.at).slice(0,30).map(p=>({...p,cm:p.cm.filter(c=>c.st=="visible"&&!blocked(m,c.au))}))},
+  report(type,id,reason,note){if(!me())return no("Sign in required");if(!REPORT_REASONS.some(r=>r[0]==reason))return no("Choose a reason");let snap="",tgt="";
+   if(type=="user"){if(id==me())return no("You can't report yourself");if(!exists(id))return no("Player not found");snap=id;tgt=id}
+   else if(type=="post"){const p=findP(id);if(!p||p.st=="deleted")return no("Post not found");if(p.au==me())return no("You can't report your own post");snap=p.t;tgt=p.au}
+   else if(type=="comment"){const[pid,cid]=String(id).split("/"),p=findP(pid),c=p&&p.cm.find(x=>x.id==cid);if(!c)return no("Comment not found");if(c.au==me())return no("You can't report your own comment");snap=c.t;tgt=c.au}else return no("Bad report");
+   if(st.rep.some(r=>r.by==me()&&r.type==type&&r.id==id&&r.st=="open"))return no("You already reported this");if(st.rep.filter(r=>r.by==me()&&self.now()-r.at<DAY).length>=10)return no("Report limit reached for today");
+   st.rep.push({rid:uid("r"),by:me(),type,id,tgt,reason,note:String(note||"").slice(0,200),snap:String(snap).slice(0,280),at:self.now(),st:"open"});
+   if(type!="user"&&new Set(st.rep.filter(r=>r.type==type&&r.id==id&&r.st=="open").map(r=>r.by)).size>=3)setSt(type,id,"hidden","auto");sv();return yes({})},
+  adminMode(v){adminOn=!!v&&DEMO_ADMIN},
+  reports(){const g={};st.rep.filter(r=>r.st=="open").forEach(r=>{const k=r.type+"|"+r.id;(g[k]=g[k]||{type:r.type,id:r.id,tgt:r.tgt,snap:r.snap,reasons:[],n:0,at:r.at}).n++;g[k].reasons.push(r.reason)});return Object.values(g).sort((a,b)=>b.n-a.n)},
+  audit:()=>st.aud.slice(-8).reverse(),restr:()=>Object.entries(st.res).filter(([u,r])=>r.susp||r.mute>self.now()),
+  mod(a,type,id){if(!adminOn)return no("Admin only");const close=v=>st.rep.forEach(r=>{if(r.type==type&&r.id==id&&r.st=="open")r.st=v});
+   if(a=="dismiss"){close("dismissed");audit(a,type,id)}else if(["hide","remove","restore"].includes(a)&&type!="user"){setSt(type,id,a=="hide"?"hidden":a=="remove"?"removed":"visible");if(a!="restore")close("actioned")}
+   else if(a=="mute"){(st.res[id]=st.res[id]||{}).mute=self.now()+DAY;audit("mute 24h","user",id);close("actioned")}else if(a=="suspend"){(st.res[id]=st.res[id]||{}).susp=1;audit("suspend","user",id);close("actioned")}else if(a=="unrestrict"){delete st.res[id];audit("unrestrict","user",id)}else return no("Bad action");sv();return yes({})},
+  postsAll:()=>st.posts.slice()});
+ return self})();
+const ago=t=>{const x=(Social.now()-t)/1e3;return x<60?"just now":x<3600?(x/60|0)+"m":x<86400?(x/3600|0)+"h":(x/86400|0)+"d"};
+const avs=root=>root.querySelectorAll("canvas[data-av]").forEach(c=>{const g=c.getContext("2d");g.clearRect(0,0,c.width,c.height);AK.draw(g,c.width/2,c.height-3,c.width/42,Social.avOf(c.dataset.av),0)});
+const cityName=id=>(CITIES.find(c=>c.id==id)||{}).name||"";
+let CT="feed";const OPEN=new Set();
+function communityHub(tab){if(tab)CT=tab;if(!S.user){mod(`<h3>👥 Community</h3><p class="mut">Create your character to join the community.</p><button class="big" style="width:100%" id="p2">SIGN UP FREE</button>`);$("#p2").onclick=auth;return}Social.adminMode(false);
+ mod(`<h3>Community</h3><div class="sw" style="flex-wrap:nowrap;overflow-x:auto">${[["feed","🏙 "+esc(CITY.name)],["friends","👥 Friends"],["find","🔎 Find"],["safety","🛡 Safety"]].map(t=>`<button class="${CT==t[0]?"sel":""}" data-ct="${t[0]}">${t[1]}</button>`).join("")}</div><div id="cbody"></div>`);
+ document.querySelectorAll("#box [data-ct]").forEach(b=>b.onclick=()=>communityHub(b.dataset.ct));({feed:feedView,friends:friendsView,find:findView,safety:safetyView}[CT]||feedView)()}
+const who=n=>`<button class="it" style="display:inline-flex;width:auto;padding:0;background:none;gap:8px;align-items:center" data-a="prof|${esc(n)}"><canvas data-av="${esc(n)}" width="36" height="44" style="width:36px;height:44px"></canvas><b>${esc(n)}</b>${samp2(n)?' <span class="tag" style="background:#8a8fa8">SAMPLE</span>':""}</button>`,samp2=n=>SAMPLE_USERS.some(u=>u.n==n);
+function feedView(){const B=$("#cbody"),j=Social.joined();
+ const html=()=>(j?`<textarea id="ct" rows="2" maxlength="280" placeholder="Share something with ${esc(CITY.name)} (max 280). No links, contact details or personal info."></textarea><button class="big" style="width:100%;margin-bottom:10px" data-a="post">POST</button>`:`<div class="it" style="display:block"><b>${esc(CITY.name)} Community</b><small>Join to post and comment. Be kind: no harassment, spam, links or personal details. Posts can be reported and are reviewed by moderators.</small><button class="big" style="margin-top:8px;width:100%" data-a="join">JOIN COMMUNITY</button></div>`)
+  +(Social.feed().map(p=>`<div class="it" style="display:block"><div class="row" style="justify-content:space-between;flex-wrap:nowrap">${who(p.au)}<small>${ago(p.at)}</small></div><p style="margin:6px 0;word-break:break-word">${esc(p.t)}</p><div class="row">${RX.map(e=>{const n=Object.values(p.rx).filter(x=>x==e).length;return`<button class="pill ${p.rx[S.user]==e?"on":"w"}" data-a="react|${p.id}|${e}">${e} ${n||""}</button>`}).join("")}<button class="pill w" data-a="cm|${p.id}">💬 ${p.cm.length}</button>${p.au==S.user?`<button class="pill w" data-a="del|post|${p.id}">Delete</button>`:`<button class="pill w" data-a="rep|post|${p.id}">⚑ Report</button>`}</div>`
+   +(OPEN.has(p.id)?`<div style="margin-top:8px">${p.cm.map(c=>`<div style="padding:6px 0;border-top:1px solid #8883"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>${esc(c.au)}</b><small>${ago(c.at)}</small></div><div style="word-break:break-word">${esc(c.t)}</div>${c.au==S.user?`<button class="pill w" data-a="del|comment|${p.id}/${c.id}">Delete</button>`:`<button class="pill w" data-a="rep|comment|${p.id}/${c.id}">⚑ Report</button>`}</div>`).join("")}${j?`<div class="row" style="flex-wrap:nowrap;margin-top:6px"><input id="cc_${p.id}" maxlength="140" placeholder="Write a comment…" style="margin:0"><button class="pill on" data-a="csend|${p.id}">Send</button></div>`:""}</div>`:"")+`</div>`).join("")||'<p class="mut">No posts yet. Be the first to post.</p>')+NOTE0;
+ B.innerHTML=html();avs(B);
+ B.onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const[a,x,y]=b.dataset.a.split("|");let r=null;
+  if(a=="prof")return publicProfile(x);if(a=="rep")return reportDlg(x,y,x=="post"?"post":"comment");
+  if(a=="join")r=Social.join();else if(a=="post")r=Social.post($("#ct").value);else if(a=="react")r=Social.react(x,y);else if(a=="cm"){OPEN.has(x)?OPEN.delete(x):OPEN.add(x);return feedView()}
+  else if(a=="csend"){r=Social.comment(x,($("#cc_"+x)||{}).value)}else if(a=="del")r=Social.del(x,y);if(r&&!r.ok)return toast(r.err);feedView()}}
+const NOTE0='<p class="mut" style="font-size:11px">Community is moderated. Report anything that breaks the rules. There is no private or anonymous chat.</p>';
+function friendsView(){const B=$("#cbody"),L=Social.lists(),oth=f=>f.a==S.user?f.b:f.a;
+ const row=(n,btns)=>`<div class="it" style="display:flex;justify-content:space-between">${who(n)}<span class="row" style="flex-wrap:nowrap">${btns}</span></div>`,bt=(a,t,c)=>`<button class="pill ${c||"w"}" data-a="${a}">${t}</button>`;
+ B.innerHTML=`<b>Requests received (${L.inc.length})</b>`+(L.inc.map(f=>row(f.a,bt("acc|"+f.id,"Accept","on")+bt("rej|"+f.id,"Reject"))).join("")||'<p class="mut">None.</p>')+`<b>Requests sent (${L.out.length})</b>`+(L.out.map(f=>row(f.b,bt("can|"+f.id,"Cancel")+(DEMO_ADMIN&&samp2(f.b)?bt("sacc|"+f.id,"Demo: accept"):""))).join("")||'<p class="mut">None.</p>')+`<b>Friends (${L.frs.length})</b>`+(L.frs.map(f=>row(oth(f),bt("rm|"+f.id,"Remove"))).join("")||'<p class="mut">No friends yet. Use Find to add players.</p>')
+  +(DEMO_ADMIN?`<div class="it" style="display:block;margin-top:10px"><b>Demo tools</b><small>No other real players exist in this prototype. Simulate a request from a sample profile:</small><div class="row" style="margin-top:6px">${SAMPLE_USERS.map(u=>bt("sim|"+u.n,u.n.replace("Sample_",""))).join("")}</div></div>`:"");avs(B);
+ B.onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const[a,x]=b.dataset.a.split("|");if(a=="prof")return publicProfile(x);const r=a=="acc"?Social.respond(x,1):a=="rej"?Social.respond(x,0):a=="can"?Social.cancel(x):a=="rm"?Social.unfriend(x):a=="sacc"?Social.simAccept(x):a=="sim"?Social.simIncoming(x):null;if(r&&!r.ok)toast(r.err);friendsView()}}
+function findView(){const B=$("#cbody");B.innerHTML=`<input id="fq" placeholder="Search players by username" autocomplete="off"><div id="fres"></div><p class="mut" style="font-size:11px">Only usernames, avatars and public profile details are searchable. Sample profiles are placeholders.</p>`;
+ const run=()=>{const q=$("#fq").value.trim().toLowerCase(),a=SAMPLE_USERS.filter(u=>!q||u.n.toLowerCase().includes(q)).filter(u=>Social.profile(u.n));$("#fres").innerHTML=a.map(u=>{const r=Social.rel(u.n);return`<div class="it" style="display:flex;justify-content:space-between">${who(u.n)}<button class="pill ${r=="none"?"on":"w"}" data-a="${r=="none"?"add|"+u.n:"prof|"+u.n}">${r=="none"?"Add friend":r=="friends"?"Friends ✓":r=="out"?"Requested":"View"}</button></div>`}).join("")||'<p class="mut">No players found.</p>';avs($("#fres"))};run();$("#fq").oninput=run;
+ B.onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const[a,x]=b.dataset.a.split("|");if(a=="prof")return publicProfile(x);const r=Social.req(x);toast(r.ok?"Request sent":r.err);run()}}
+function safetyView(){const B=$("#cbody"),bl=Social.blocks();B.innerHTML=`<div class="it" style="display:block"><b>Friend requests</b><div class="row" style="margin-top:6px"><button class="pill ${Social.pri()=="everyone"?"on":"w"}" data-a="pri|everyone">Everyone</button><button class="pill ${Social.pri()=="nobody"?"on":"w"}" data-a="pri|nobody">Nobody</button></div></div>
+ <b>Blocked players (${bl.length})</b>`+(bl.map(n=>`<div class="it" style="display:flex;justify-content:space-between"><b>${esc(n)}</b><button class="pill w" data-a="unb|${esc(n)}">Unblock</button></div>`).join("")||'<p class="mut">No one blocked.</p>')+`<div class="it" style="display:block"><b>Community rules</b><small>Be kind. No harassment, hate, spam or scams. No links, contact details or personal information. Posts and players can be reported; three separate reports hide a post until a moderator reviews it.</small></div>`+(DEMO_ADMIN?'<button class="big o" style="width:100%" data-a="mod|">DEMO MODERATOR CONSOLE</button>':"");
+ B.onclick=e=>{const b=e.target.closest("[data-a]");if(!b)return;const[a,x]=b.dataset.a.split("|");if(a=="mod")return modHub();if(a=="pri")Social.setPri(x);if(a=="unb")Social.unblock(x);safetyView()}}
+function publicProfile(n){const p=Social.profile(n);if(!p){mod(`<h3>Profile unavailable</h3><p class="mut">This profile can't be shown.</p>`);return}const r=Social.rel(n),id=Social.relId(n),bt=(a,t,c)=>`<button class="big ${c||"o"}" style="flex:1" data-pa="${a}">${t}</button>`;
+ mod(`<div class="row" style="flex-wrap:nowrap"><canvas class="pv" id="ppa" width="110" height="130" style="width:110px;margin:0"></canvas><div style="flex:1"><h3 style="margin:0">${esc(p.n)}</h3>${p.sample?'<span class="tag" style="background:#8a8fa8">SAMPLE PROFILE</span>':""}<div class="mut">LEVEL ${p.lv} · ${esc(cityName(p.city))}</div><div class="xp" style="margin:6px 0"><b style="width:${p.xp%100}%"></b></div><div class="mut">${p.xp} XP</div></div></div><b>Interests</b><div class="sw" style="margin-top:6px">${(p.int.length?p.int:["None yet"]).map(i=>`<span class="pill" style="background:#8a5cf6">${esc(i)}</span>`).join("")}</div><b>Badges</b><div class="sw" style="font-size:26px;margin-top:6px">${p.bd.map(b=>`<span>${b}</span>`).join("")||'<span class="mut" style="font-size:13px">None yet</span>'}</div>`
+ +(r=="self"?'<p class="mut">This is how others see you. Email, account details and your location are never shown.</p>':`<div class="row">${r=="none"?bt("add","ADD FRIEND","")+"":r=="out"?bt("can","CANCEL REQUEST"):r=="in"?bt("acc","ACCEPT","")+bt("rej","REJECT"):bt("rm","REMOVE FRIEND")}</div><div class="row" style="margin-top:8px">${bt("blk","BLOCK")}${bt("rep","REPORT")}</div>`));
+ AK.draw($("#ppa").getContext("2d"),55,118,2.6,p.av,0);
+ document.querySelectorAll("#box [data-pa]").forEach(b=>b.onclick=()=>{const a=b.dataset.pa;if(a=="rep")return reportDlg("user",n,"player");const r=a=="add"?Social.req(n):a=="can"?Social.cancel(id):a=="acc"?Social.respond(id,1):a=="rej"?Social.respond(id,0):a=="rm"?Social.unfriend(id):a=="blk"?Social.block(n):null;
+  if(r&&!r.ok)toast(r.err);else if(a=="blk")toast(n+" blocked");if(a=="blk")communityHub("safety");else publicProfile(n)})}
+function reportDlg(type,id,label){mod(`<h3>Report ${label}</h3><select id="rr">${REPORT_REASONS.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join("")}</select><textarea id="rn" rows="2" maxlength="200" placeholder="Optional details (do not include personal information)"></textarea><button class="big" style="width:100%" id="rs">SEND REPORT</button><p class="mut" style="font-size:11px">Reports go to moderators. Repeated false reports may lead to restrictions.</p>`);
+ $("#rs").onclick=()=>{const r=Social.report(type,id,$("#rr").value,$("#rn").value);toast(r.ok?"Report sent. Thank you.":r.err);if(r.ok)communityHub()}}
+function modHub(){Social.adminMode(true);const R=Social.reports(),A=(a,t,i,l)=>`<button class="pill w" data-md="${a}|${t}|${esc(i)}">${l}</button>`;
+ mod(`<h3>🛡 Demo moderator console</h3><p class="mut" style="font-size:12px">Simulates the moderator role on this device. In production this is a separate authenticated tool.</p><b>Open reports (${R.length})</b>`+(R.map(r=>`<div class="it" style="display:block"><b>${r.type.toUpperCase()}</b> · ${r.n} report${r.n>1?"s":""} · ${esc([...new Set(r.reasons)].join(", "))}<small>${r.type=="user"?"Player: "+esc(r.id):"By "+esc(r.tgt)+": “"+esc(r.snap)+"”"}</small><div class="row" style="margin-top:6px">${r.type!="user"?A("hide",r.type,r.id,"Hide")+A("remove",r.type,r.id,"Remove"):""}${A("mute","user",r.tgt,"Mute 24h")}${A("suspend","user",r.tgt,"Suspend")}${A("dismiss",r.type,r.id,"Dismiss")}</div></div>`).join("")||'<p class="mut">No open reports.</p>')
+  +`<b>Restricted players</b>`+(Social.restr().map(([u,x])=>`<div class="it" style="display:flex;justify-content:space-between"><span>${esc(u)} · ${x.susp?"suspended":"muted"}</span>${A("unrestrict","user",u,"Lift")}</div>`).join("")||'<p class="mut">None.</p>')+`<b>Recent actions</b>`+(Social.audit().map(a=>`<small style="display:block">${ago(a.at)} · ${esc(a.by)} · ${esc(a.a)} ${esc(a.t)} ${esc(a.i)}</small>`).join("")||'<p class="mut">None.</p>')+`<button class="big o" style="width:100%;margin-top:8px" id="mb">BACK</button>`);
+ $("#mb").onclick=()=>communityHub("safety");document.querySelectorAll("#box [data-md]").forEach(b=>b.onclick=()=>{const[a,t,i]=b.dataset.md.split("|");const r=Social.mod(a,t,i);toast(r.ok?"Done":r.err);modHub()})}
+// ---- Advertising ----
+/* SIMULATED server side of advertising: campaign state machine, manual payment, tracking. Production version: lifemindwurld_advertising.sql.
+   DEMO_ADMIN only exposes a simulated admin console on this device; production admin is a separate authenticated tool. */
+const DEMO_ADMIN=true,AD_CAPS={xp:100,c:25,maxDays:90};
+const AD_TYPES={featured_listing:{n:"Featured Listing",e:"⭐",d:"Top of Discover results, labelled SPONSORED."},billboard:{n:"Virtual Billboard",e:"📺",d:"Your creative rotates on a digital billboard in the city."},sponsored_mission:{n:"Sponsored Mission",e:"🎯",d:"A mission that sends players to your location. Rewards are capped."},game_challenge:{n:"Sponsored Game Challenge",e:"🎮",d:"A bonus challenge inside a game, e.g. 8+ correct in City Trivia."},featured_location:{n:"Featured Business Location",e:"📍",d:"Your location gets a highlighted map marker."}};
+const SM={draft:{submit:["advertiser","submitted"]},submitted:{review:["admin","under_review"],withdraw:["advertiser","draft"]},under_review:{approve:["admin","approved"],reject:["admin","rejected"]},rejected:{revise:["advertiser","draft"]},approved:{activate:["system","active"]},active:{pause:["advertiser","paused"],complete:["system","completed"]},paused:{resume:["advertiser","active"],complete:["system","completed"]},completed:{}};
+const AD_LBL={draft:"Draft",submitted:"Submitted",under_review:"Under review",approved:"Approved",rejected:"Rejected",active:"Active",paused:"Paused",completed:"Completed"};
+const safeImg=u=>/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(u||"")?u:"";
+const Ads=(()=>{const K="lmw_ads_v1";let st={camps:[],ev:[]},adminOn=false;const imgs={};
+ try{const d=JSON.parse(localStorage.getItem(K));if(d)st={camps:d.camps||[],ev:d.ev||[]}}catch(e){}
+ const sv=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}};const self={now:()=>Date.now()},today=()=>cityDay(self.now());
+ const all=()=>[...(CITY.campaigns||[]),...st.camps],inWin=c=>today()>=c.starts&&today()<=c.ends;
+ const owned=()=>[...BizSub.all().filter(x=>x.owner==S.user).map(x=>({id:x.id,name:x.d.name,logo:x.d.logo,verified:false,loc:null})),...(DEMO_ADMIN?BIZ.map(b=>({id:b.id,name:b.name+" (demo business)",logo:b.logo,verified:true,loc:b.loc})):[])];
+ const info=id=>owned().find(b=>b.id==id)||BIZ.find(b=>b.id==id)&&{verified:true,loc:BIZ.find(b=>b.id==id).loc,name:BIZ.find(b=>b.id==id).name};
+ const days=(a,b)=>(Date.parse(b)-Date.parse(a))/864e5;
+ function check(d,strict){const o=info(d.biz),dt=/^\d{4}-\d{2}-\d{2}$/;
+  if(!d.biz||!owned().some(b=>b.id==d.biz))return"Choose one of your businesses";if(!AD_TYPES[d.type])return"Choose a placement";if(!CITIES.some(c=>c.id==d.city&&playable(c)))return"Choose an available city";
+  if((d.headline||"").length<3||d.headline.length>40)return"Headline must be 3–40 characters";if((d.body||"").length<10||d.body.length>90)return"Text must be 10–90 characters";if((d.cta||"").length>24)return"Button text is too long";
+  if(d.creative&&!safeImg(d.creative))return"Creative must be a PNG, JPEG or WebP image";
+  if(!strict)return"";
+  if(!dt.test(d.starts||"")||!dt.test(d.ends||""))return"Choose start and end dates";if(d.ends<d.starts)return"End date must be after the start date";if(days(d.starts,d.ends)+1>AD_CAPS.maxDays)return"Campaigns can run up to "+AD_CAPS.maxDays+" days";if(d.starts<today())return"Start date cannot be in the past";
+  if(d.type=="billboard"&&!cityLocs(d.city).some(l=>l.id==d.slot&&l.visual&&l.visual.bb))return"Choose a billboard slot";if(d.type=="billboard"&&!d.creative)return"Billboards need an uploaded creative image";
+  if(d.type=="game_challenge"){const g=d.game,t=d.thr;if(!Games.reg[g])return"Choose a game";if(g=="trivia"&&!(Number.isInteger(t)&&t>=5&&t<=10))return"Trivia target: 5–10 correct";if(g=="memory"&&!(Number.isInteger(t)&&t>=10&&t<=30))return"Memory target: 10–30 moves"}
+  if(d.type=="game_challenge"||d.type=="sponsored_mission"){const r=d.reward||{};if(!Number.isInteger(r.xp)||!Number.isInteger(r.c)||r.xp<0||r.c<0||r.xp>AD_CAPS.xp||r.c>AD_CAPS.c||r.xp+r.c==0)return"Rewards: whole numbers, max "+AD_CAPS.xp+" XP and "+AD_CAPS.c+" LifeCoins"}
+  if((d.type=="sponsored_mission"||d.type=="featured_location")&&!(o&&o.loc))return"This placement needs a verified business with a map location";return""}
+ const capErr=c=>{const cc=CITIES.find(x=>x.id==c.city)||{},inv={billboardRotation:4,featuredListings:3,missions:3,...(cc.inventory||{})};
+  const n=all().filter(x=>x.id!=c.id&&x.city==c.city&&x.type==c.type&&["approved","active","paused"].includes(x.status)&&x.starts<=c.ends&&x.ends>=c.starts&&(c.type!="billboard"||x.slot==c.slot)&&(c.type!="game_challenge"||x.game==c.game)&&(c.type!="featured_location"||x.biz==c.biz)).length;
+  const cap=c.type=="billboard"?inv.billboardRotation:c.type=="featured_listing"?inv.featuredListings:c.type=="sponsored_mission"?inv.missions:1;return n>=cap?"No advertising inventory left for those dates":""};
+ const mine=()=>st.camps.filter(c=>c.owner==S.user),get=id=>all().find(c=>c.id==id);
+ Object.assign(self,{check,owned,mine,get,all:()=>st.camps.slice(),
+  adminMode(v){adminOn=!!v&&DEMO_ADMIN},
+  save(id,d,submit){if(!S.user)return{ok:false,err:"Sign in required"};const e=check(d,!!submit);if(e)return{ok:false,err:e};
+   const n={...d};if(n.type=="game_challenge"){if(n.game=="trivia")n.xmin=n.thr;if(n.game=="memory")n.xmax=n.thr}
+   let c=id&&st.camps.find(x=>x.id==id&&x.owner==S.user);if(c){if(c.status!="draft")return{ok:false,err:"Only drafts can be edited"};Object.assign(c,n)}
+   else{if(mine().filter(x=>x.status=="draft").length>=10)return{ok:false,err:"Too many drafts"};c={id:"ac_"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),owner:S.user,status:"draft",pay:{status:"unpaid"},hist:[],created:self.now(),...n};st.camps.push(c)}
+   sv();return submit?self.go(c.id,"submit","advertiser"):{ok:true,id:c.id}},
+  remove(id){const i=st.camps.findIndex(c=>c.id==id&&c.owner==S.user&&c.status=="draft");if(i<0)return false;st.camps.splice(i,1);sv();return true},
+  go(id,action,actor,p){const c=st.camps.find(x=>x.id==id);if(!c)return{ok:false,err:"Campaign not found"};const t=(SM[c.status]||{})[action];if(!t)return{ok:false,err:"Not allowed while "+AD_LBL[c.status]};
+   if(t[0]=="admin"&&!(actor=="admin"&&adminOn))return{ok:false,err:"Admin only"};if(t[0]=="advertiser"&&(actor!="advertiser"||c.owner!=S.user))return{ok:false,err:"Only the campaign owner can do that"};if(t[0]=="system"&&actor!="system")return{ok:false,err:"System only"};
+   if(action=="submit"){const e=check(c,1);if(e)return{ok:false,err:e}}
+   if(action=="approve"){const o=info(c.biz);if(!o||!o.verified)return{ok:false,err:"The business is not verified yet"};{const e2=capErr(c);if(e2)return{ok:false,err:e2}}if(c.ends<today())return{ok:false,err:"Campaign dates have passed"}}
+   if(action=="reject"&&!(p&&p.reason))return{ok:false,err:"A reason is required"};
+   if(action=="activate"&&(c.pay.status!="confirmed"||today()<c.starts))return{ok:false,err:"Needs confirmed payment and start date"};
+   c.hist.push({t:self.now(),from:c.status,to:t[1],by:actor,reason:(p&&p.reason)||""});c.status=t[1];if(action=="reject")c.reason=String(p.reason).slice(0,200);sv();self.apply();return{ok:true,status:c.status}},
+  confirmPayment(id,ref){const c=st.camps.find(x=>x.id==id);if(!adminOn)return{ok:false,err:"Admin only"};if(!c||!["approved","active","paused"].includes(c.status))return{ok:false,err:"Approve the campaign first"};if(!ref||!ref.trim())return{ok:false,err:"Enter a payment reference"};
+   c.pay={status:"confirmed",provider:"manual",ref:ref.trim().slice(0,60),at:self.now()};sv();self.apply();return{ok:true}},
+  tick(){st.camps.forEach(c=>{if(c.status=="approved"&&c.pay.status=="confirmed"&&today()>=c.starts&&today()<=c.ends)c.status="active",c.hist.push({t:self.now(),from:"approved",to:"active",by:"system",reason:""});
+   if((c.status=="active"||c.status=="paused")&&today()>c.ends){c.hist.push({t:self.now(),from:c.status,to:"completed",by:"system",reason:""});c.status="completed"}});sv()},
+  act(type){return all().filter(c=>c.type==type&&c.status=="active"&&c.city==S.city&&inWin(c))},
+  track(id,k){const c=get(id);if(!c||c.status!="active"||!inWin(c))return false;const t=self.now(),w=k=="impression"?18e5:6e4,l=st.ev.filter(e=>e.id==id&&e.k==k).pop();if(l&&t-l.t<w)return false;st.ev.push({id,k,t});if(st.ev.length>4000)st.ev.splice(0,400);sv();return true},
+  imp:id=>self.track(id,"impression"),click:id=>self.track(id,"click"),
+  metrics(c){if(!["approved","active","paused","completed"].includes(c.status))return null;const imp=st.ev.filter(e=>e.id==c.id&&e.k=="impression").length,clk=st.ev.filter(e=>e.id==c.id&&e.k=="click").length,m=CAT.find(x=>x.camp==c.id);let part=null,done=null;
+   if(m){const v=Server.mission(m);done=v.status=="claimed"?1:0;part=(v.progress>0||done)?1:0}return{imp,clk,ctr:imp?clk/imp:null,part,done}},
+  apply(){self.tick();for(let i=CAT.length-1;i>=0;i--)if(CAT[i].cm)CAT.splice(i,1);(CITY.missionCatalog||[]).forEach(m=>CAT.push({...m,cm:1}));locs.forEach(l=>{l.adFeat=null;if(l.biz||l.visual.bb)l.sp=l.sponsored=false});
+   self.act("featured_location").forEach(c=>{const b=BIZ.find(x=>x.id==c.biz),l=b&&locs.find(x=>x.id==b.loc);if(l){l.adFeat=c;l.sp=l.sponsored=true}});
+   if(self.act("billboard").length)locs.filter(l=>l.visual.bb).forEach(l=>{l.sp=l.sponsored=true});
+   for(let i=CAT.length-1;i>=0;i--)if(CAT[i].sp)CAT.splice(i,1);
+   [...self.act("sponsored_mission"),...self.act("game_challenge")].forEach(c=>{const b=BIZ.find(x=>x.id==c.biz)||{};if(c.type=="sponsored_mission"&&!b.loc)return;
+    CAT.push({id:"sp:"+c.id,type:"sponsored",title:c.headline,desc:c.body,goal:c.type=="sponsored_mission"?{k:"refs",refs:[b.loc]}:{k:"plays",game:c.game,n:1,...(c.xmin!=null?{xmin:c.xmin}:{}),...(c.xmax!=null?{xmax:c.xmax}:{})},reward:c.reward,period:"event",window:[Date.parse(c.starts+"T00:00:00Z"),Date.parse(c.ends+"T23:59:59Z")],sp:1,sponsor:b.name||"Sponsor",camp:c.id,chal:c.type=="game_challenge"?c.game:null})})},
+  thumb(c){const b=BIZ.find(x=>x.id==c.biz)||{logo:"📣"},im=safeImg(c.creative);return im?`<img src="${im}" alt="" style="width:64px;height:44px;object-fit:cover;border-radius:10px">`:`<span class="logo-b" style="width:44px;height:44px;font-size:24px;border-radius:12px">${esc(b.logo)}</span>`},
+  tag:c=>`<span class="tag" style="background:#18c76f">SPONSORED</span>${c.demo?' <span class="tag" style="background:#8a8fa8">DEMO</span>':""}`,
+  cur(l){const cs=self.act("billboard").filter(x=>x.slot==l.id);return cs.length?cs[reduce?0:(self.now()/5e3|0)%cs.length]:null},
+  bb(l,q,h){const c=self.cur(l);cx.fillStyle="#fff";cx.fillRect(q[0]-10*z,q[1]-(h+24)*z,20*z,13*z);const x=q[0]-8*z,y=q[1]-(h+22)*z;
+   if(!c){cx.fillStyle="#8a8fa8";cx.fillRect(x,y,16*z,9*z);return}const u=safeImg(c.creative);if(u){let im=imgs[c.id];if(!im){im=imgs[c.id]=new Image();im.src=u}if(im.complete&&im.naturalWidth){cx.drawImage(im,x,y,16*z,9*z);return}}
+   cx.fillStyle="#8a5cf6";cx.fillRect(x,y,16*z,9*z);cx.font=8*z+"px sans-serif";cx.textAlign="center";cx.fillStyle="#fff";cx.fillText(((BIZ.find(b=>b.id==c.biz)||{}).logo)||"📣",q[0],y+7.5*z)},
+  ring(q,h){const k=reduce?1:1+.08*Math.sin(self.now()/300);cx.strokeStyle="#ffd166";cx.lineWidth=3*z;cx.beginPath();cx.ellipse(q[0],q[1],28*z*k,14*z*k,0,0,7);cx.stroke()},
+  seen(l,vis){if(!vis||z<.8)return;const t=self.now();if(l._st&&t-l._st<2e3)return;l._st=t;if(l.visual.bb){const c=self.cur(l);if(c)self.imp(c.id)}if(l.adFeat)self.imp(l.adFeat.id)},
+  featHtml(){const q=DQ.q.toLowerCase().trim();return self.act("featured_listing").filter(c=>{const b=BIZ.find(x=>x.id==c.biz);return b&&(DQ.c=="all"||b.cat==DQ.c)&&(!q||(c.headline+" "+c.body+" "+b.name).toLowerCase().includes(q))}).map(c=>{self.imp(c.id);const b=BIZ.find(x=>x.id==c.biz);return`<button class="it" data-ad="${esc(c.id)}" style="border:2px solid #18c76f">${self.thumb(c)}<span style="flex:1">${self.tag(c)}<b style="display:block">${esc(c.headline)}</b><small>${esc(c.body)} · ${esc(b.name)}</small></span></button>`}).join("")},
+  cardHtml(l){let c=null;l._cur=null;if(l.visual.bb){c=self.cur(l);if(!c)return'<p class="mut" style="font-size:12px">This billboard is available. Businesses can book it from the Advertise dashboard.</p>'}else if(l.adFeat){c=l.adFeat;self.click(c.id)}if(!c)return"";l._cur=c;self.imp(c.id);
+   return`<div class="it" style="display:block;border:2px solid #18c76f">${self.tag(c)}<div class="row" style="flex-wrap:nowrap;margin-top:6px">${self.thumb(c)}<div><b>${esc(c.headline)}</b><small>${esc(c.body)}</small></div></div></div>`},
+  cardActs:l=>l.visual.bb&&l._cur?`<button class="big s" id="adcta">${esc(l._cur.cta||"Visit business")}</button>`:"",
+  bind(l,g){if(g("adcta"))g("adcta").onclick=()=>{self.click(l._cur.id);bizProfile(l._cur.biz)}},
+  challengeHtml(game){return CAT.filter(m=>m.chal==game).map(m=>{self.imp(m.camp);const v=Server.mission(m);return`<div class="it" style="display:block;border-left:4px solid #18c76f;margin-top:8px"><span class="tag" style="background:#18c76f">SPONSORED</span> <b>${esc(m.title)}</b><small>${esc(m.desc)} · by ${esc(m.sponsor)}</small><div class="row" style="justify-content:space-between"><b>+${m.reward.xp} XP · +${m.reward.c} LifeCoins · ${STAT[v.status]}</b>${v.status=="claimable"?`<button class="big" style="flex:0 0 auto;padding:8px 14px" data-claim="${esc(m.id)}">CLAIM</button>`:""}</div></div>`}).join("")},
+  shown:m=>(self.imp(m.camp),true)});
+ return self})();
+const ADCOL={draft:"#8a8fa8",submitted:"#2f7bff",under_review:"#b4690e",approved:"#18c76f",rejected:"#e05a5a",active:"#18c76f",paused:"#b4690e",completed:"#5b6078"};
+function adsHub(){if(!need())return;Ads.adminMode(false);const mine=Ads.mine().slice().reverse();
+ const mt=c=>{const m=Ads.metrics(c);return m?`<div class="mut" style="font-size:12px">Impressions <b>${m.imp}</b> · Clicks <b>${m.clk}</b> · CTR <b>${m.ctr==null?"—":(m.ctr*100).toFixed(1)+"%"}</b>${m.part!=null?` · Mission participation <b>${m.part}</b> (completed ${m.done})`:""}<br>Measured on this device only (demo).</div>`:'<div class="mut" style="font-size:12px">Metrics appear after approval.</div>'};
+ const btn=(c)=>({draft:[["edit","EDIT"],["submit","SUBMIT"],["delete","DELETE"]],submitted:[["withdraw","WITHDRAW"]],rejected:[["revise","REVISE"]],active:[["pause","PAUSE"]],paused:[["resume","RESUME"]]}[c.status]||[]).map(b=>`<button class="big o" style="flex:0 0 auto;padding:8px 12px" data-ca="${b[0]}:${esc(c.id)}">${b[1]}</button>`).join("");
+ mod(`<h3>📣 Advertise on Lifemindwurld</h3><p class="mut" style="font-size:12px">Free for players; businesses pay for visibility. In this version an administrator approves every campaign and confirms payment manually. Pricing is agreed with the Lifemindwurld team; none is shown here. Sponsored content is always labelled SPONSORED.</p>`+Object.values(AD_TYPES).map(t=>`<div class="it" style="display:block;padding:6px 10px"><b>${t.e} ${t.n}</b><small>${t.d}</small></div>`).join("")+`<div class="row" style="margin:10px 0"><button class="big" id="anew">NEW CAMPAIGN</button>${DEMO_ADMIN?'<button class="big o" id="aadm">DEMO ADMIN</button>':""}</div><b>My campaigns</b>`
+ +(mine.length?mine.map(c=>`<div class="it" style="display:block"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>${esc(c.headline)}</b><span class="tag" style="background:${ADCOL[c.status]}">${AD_LBL[c.status]}</span></div><small>${AD_TYPES[c.type].e} ${AD_TYPES[c.type].n} · ${esc((CITIES.find(x=>x.id==c.city)||{}).name)} · ${esc(c.starts||"?")} → ${esc(c.ends||"?")}</small><small>Payment: ${c.pay.status=="confirmed"?"confirmed manually (ref "+esc(c.pay.ref)+")":"awaiting manual confirmation"}${c.reason?" · Rejected: "+esc(c.reason):""}</small>${mt(c)}<div class="row" style="margin-top:6px">${btn(c)}</div></div>`).join(""):'<p class="mut">No campaigns yet.</p>')+NOTE);
+ $("#anew").onclick=()=>adForm();if($("#aadm"))$("#aadm").onclick=adminHub;
+ document.querySelectorAll("#box [data-ca]").forEach(b=>b.onclick=()=>{const[a,id]=b.dataset.ca.split(":");if(a=="edit")return adForm(id);if(a=="delete"){Ads.remove(id);return adsHub()}const r=Ads.go(id,a,"advertiser");toast(r.ok?"Campaign "+AD_LBL[r.status].toLowerCase():r.err);adsHub()})}
+function adForm(id){if(!need())return;const own=Ads.owned(),c=id?Ads.get(id):null;let creative=c&&c.creative||"";
+ if(!own.length){mod(`<h3>New campaign</h3><p class="mut">Register a business first. It must be verified before a campaign can be approved.</p><button class="big" style="width:100%" id="nb">REGISTER A BUSINESS</button>`);$("#nb").onclick=bizRegister;return}
+ const bbf=()=>cityLocs((document.getElementById("af_city")||{}).value||(c&&c.city)||CITY.id).filter(l=>l.visual&&l.visual.bb),v=(k,d)=>c&&c[k]!=null?c[k]:d,rw=()=>`<div class="row" style="flex-wrap:nowrap"><input id="af_xp" type="number" placeholder="Reward XP (max ${AD_CAPS.xp})" value="${c&&c.reward?c.reward.xp:""}"><input id="af_c" type="number" placeholder="LifeCoins (max ${AD_CAPS.c})" value="${c&&c.reward?c.reward.c:""}"></div>`;
+ const ex=t=>t=="billboard"?`<select id="af_slot">${bbf().map(l=>`<option value="${l.id}" ${v("slot")==l.id?"selected":""}>${esc(l.d)} · billboard slot</option>`).join("")}</select><p class="mut" style="font-size:12px">A creative image is required.</p>`
+  :t=="game_challenge"?`<select id="af_g">${Object.values(Games.reg).map(g=>`<option value="${g.id}" ${v("game")==g.id?"selected":""}>${g.e} ${g.name}</option>`).join("")}</select><input id="af_t" type="number" placeholder="Target: trivia correct (5–10) or memory max moves (10–30)" value="${v("thr","")}">`+rw()
+  :t=="sponsored_mission"?`<p class="mut" style="font-size:12px">Players check in at your map location. Requires a verified business with a location.</p>`+rw():"";
+ mod(`<div id="af"><h3>${c?"Edit campaign":"New campaign"}</h3><b>Business</b><select id="af_biz">${own.map(b=>`<option value="${esc(b.id)}" ${v("biz")==b.id?"selected":""}>${esc(b.logo)} ${esc(b.name)}${b.verified?"":" (pending verification)"}</option>`).join("")}</select>
+ <b>Placement</b><select id="af_type">${Object.entries(AD_TYPES).map(([k,t])=>`<option value="${k}" ${v("type")==k?"selected":""}>${t.e} ${t.n}</option>`).join("")}</select><div id="af_ex">${ex(v("type","featured_listing"))}</div>
+ <b>City</b><select id="af_city">${CITIES.map(x=>`<option value="${x.id}" ${playable(x)?"":"disabled"} ${v("city",CITY.id)==x.id?"selected":""}>${esc(x.name)}${playable(x)?"":" (coming soon)"}</option>`).join("")}</select>
+ <input id="af_h" maxlength="40" placeholder="Headline (3–40) *" value="${esc(v("headline",""))}"><textarea id="af_b" rows="2" maxlength="90" placeholder="Text (10–90) *">${esc(v("body",""))}</textarea><input id="af_cta" maxlength="24" placeholder="Button text, e.g. Visit" value="${esc(v("cta",""))}">
+ <b>Creative image</b> <small class="mut">(PNG, JPEG or WebP; resized to 320×160 and reviewed by an admin)</small><input id="af_img" type="file" accept="image/png,image/jpeg,image/webp"><img id="af_pv" alt="" style="display:${creative?"block":"none"};width:160px;border-radius:10px;margin-bottom:8px" src="${safeImg(creative)}">
+ <b>Dates</b><div class="row" style="flex-wrap:nowrap"><input id="af_s" type="date" value="${esc(v("starts",""))}"><input id="af_e" type="date" value="${esc(v("ends",""))}"></div>
+ <div class="row"><button class="big o" id="af_d">SAVE DRAFT</button><button class="big" id="af_go">SAVE & SUBMIT</button></div></div>`);
+ $("#af_type").onchange=()=>{$("#af_ex").innerHTML=ex($("#af_type").value)};$("#af_city").onchange=()=>{$("#af_ex").innerHTML=ex($("#af_type").value)};
+ $("#af_img").onchange=e=>{const f=e.target.files[0];if(!f)return;if(!/^image\/(png|jpeg|webp)$/.test(f.type)||f.size>3e6)return toast("Use a PNG, JPEG or WebP under 3 MB");const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=document.createElement("canvas");k.width=320;k.height=160;const g=k.getContext("2d"),m=Math.max(320/im.width,160/im.height);g.drawImage(im,(320-im.width*m)/2,(160-im.height*m)/2,im.width*m,im.height*m);creative=k.toDataURL("image/jpeg",.7);$("#af_pv").src=creative;$("#af_pv").style.display="block"};im.onerror=()=>toast("Could not read that image");im.src=r.result};r.readAsDataURL(f)};
+ const g=i=>{const e=$("#"+i);return e?(e.value||"").trim():""},collect=()=>{const t=g("af_type"),d={biz:g("af_biz"),type:t,city:g("af_city"),headline:g("af_h"),body:g("af_b"),cta:g("af_cta")||"Visit",creative,starts:g("af_s"),ends:g("af_e")};
+  if(t=="billboard")d.slot=g("af_slot");if(t=="game_challenge"){d.game=g("af_g");d.thr=g("af_t")===""?null:+g("af_t")}if(t=="game_challenge"||t=="sponsored_mission")d.reward={xp:g("af_xp")===""?0:+g("af_xp"),c:g("af_c")===""?0:+g("af_c")};return d};
+ const run=sub=>()=>{const r=Ads.save(id,collect(),sub);if(!r.ok)return toast(r.err);toast(sub?"Submitted for review":"Draft saved");adsHub()};$("#af_d").onclick=run(false);$("#af_go").onclick=run(true)}
+function adminHub(){Ads.adminMode(true);const a=Ads.all().reverse();
+ mod(`<h3>🛡 Demo admin console</h3><p class="mut" style="font-size:12px">Simulates the administrator role on this device. In production this is a separate authenticated tool and players never see it. Approval needs a verified business; payment is confirmed manually.</p>`+(a.length?a.map(c=>{const id=esc(c.id),o=Ads.owned().find(b=>b.id==c.biz);return`<div class="it" style="display:block"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>${esc(c.headline)}</b><span class="tag" style="background:${ADCOL[c.status]}">${AD_LBL[c.status]}</span></div><small>${AD_TYPES[c.type].n} · owner ${esc(c.owner)} · business ${o?(o.verified?"verified":"NOT verified"):"?"} · payment ${c.pay.status}</small>`
+  +(c.status=="submitted"?`<div class="row"><button class="big" data-ad2="review:${id}">START REVIEW</button></div>`:"")
+  +(c.status=="under_review"?`<input id="rr_${id}" placeholder="Rejection reason (required to reject)"><div class="row"><button class="big" data-ad2="approve:${id}">APPROVE</button><button class="big o" data-ad2="reject:${id}">REJECT</button></div>`:"")
+  +(["approved","active","paused"].includes(c.status)&&c.pay.status!="confirmed"?`<input id="pr_${id}" placeholder="Payment reference (manual)"><div class="row"><button class="big" data-ad2="pay:${id}">CONFIRM PAYMENT</button></div>`:"")+`</div>`}).join(""):'<p class="mut">No user campaigns yet.</p>')+`<button class="big o" style="width:100%" id="aback">BACK</button>`);
+ $("#aback").onclick=adsHub;document.querySelectorAll("#box [data-ad2]").forEach(b=>b.onclick=()=>{const[a,id]=b.dataset.ad2.split(":");const r=a=="pay"?Ads.confirmPayment(id,($("#pr_"+id)||{}).value):Ads.go(id,a,"admin",{reason:($("#rr_"+id)||{}).value});toast(r.ok?"Done":r.err);adminHub()})}
+// ---- Discover: places + verified businesses ----
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl=u=>/^https:\/\/[^\s<>"']+$/i.test(u||"")?u:"";
+const DCATS=[["restaurants","Restaurants","🍽"],["shopping","Shopping","🛍"],["entertainment","Entertainment","🎵"],["hotels","Hotels","🏨"],["education","Education","📚"],["healthcare","Healthcare","🏥"],["services","Services","⚖"],["events","Events","🎉"],["tourism","Tourism","🗺"],["businesses","Businesses","🏢"]];
+const DMAP={food:"restaurants",shop:"shopping",fun:"entertainment",games:"entertainment",hotel:"hotels",education:"education",health:"healthcare",services:"services",event:"events",landmark:"tourism",business:"businesses",ad:"businesses"};
+const dcatOf=l=>l.biz?l.biz.cat:DMAP[l.cat];
+const BizSub={k:"lmw_biz_sub",all(){try{return JSON.parse(localStorage.getItem(this.k))||[]}catch(e){return[]}},save(a){try{localStorage.setItem(this.k,JSON.stringify(a))}catch(e){}}};
+let DQ={q:"",c:"all",v:0,s:"near"};
+function discoverHub(){const dist=l=>Math.hypot(av.x-l.x-.5,av.y-l.y-.5),lab=l=>(DCATS.find(c=>c[0]==dcatOf(l))||[0,""])[1];
+ mod(`<h3>🧭 Discover ${esc(CITY.name)}</h3><input id="dq" placeholder="Search places and businesses…" value="${esc(DQ.q)}"><div class="sw" id="dch" style="flex-wrap:nowrap;overflow-x:auto">${[["all","All","✨"],...DCATS].map(c=>`<button data-dc="${c[0]}" class="${DQ.c==c[0]?"sel":""}">${c[2]} ${c[1]}</button>`).join("")}</div><div class="sw"><button id="dv" class="${DQ.v?"sel":""}">✓ Verified businesses only</button><button id="ds">Sort: ${DQ.s=="near"?"Nearest":"A–Z"}</button></div><div id="dres"></div><div class="row"><button class="big s" id="dreg">REGISTER YOUR BUSINESS</button><button class="big o" id="dmy">MY SUBMISSIONS</button><button class="big o" id="dad">ADVERTISE</button></div>`);
+ const run=()=>{const q=DQ.q.toLowerCase().trim();const it=locs.filter(l=>dcatOf(l)&&(DQ.c=="all"||dcatOf(l)==DQ.c)&&(!DQ.v||l.biz)&&(!q||(l.n+" "+l.tg+" "+l.d+" "+lab(l)+" "+(l.biz?l.biz.desc:"")).toLowerCase().includes(q)));
+  it.sort((a,b)=>(!!b.sp-!!a.sp)||(DQ.s=="near"?dist(a)-dist(b):a.n.localeCompare(b.n)));
+  $("#dres").innerHTML=Ads.featHtml()+(it.length?it.map(l=>`<button class="it" data-l="${l.id}"><span class="logo-b" style="width:44px;height:44px;font-size:24px;border-radius:12px">${esc(l.e)}</span><span style="flex:1"><b>${esc(l.n)}</b> ${l.sp?'<span class="tag" style="background:#18c76f">SPONSORED</span>':""}${l.biz?'<span class="tag" style="background:#2f7bff">✓ VERIFIED</span>':""}${l.biz&&l.biz.demo?' <span class="tag" style="background:#8a8fa8">DEMO</span>':""}<small>${lab(l)} · ${esc(l.d)} · ${l.biz?"Business":"Virtual place"} · ~${Math.round(dist(l))} tiles away</small></span></button>`).join(""):`<p class="mut">Nothing matches yet.</p>`)};
+ run();$("#dq").oninput=e=>{DQ.q=e.target.value;run()};
+ $("#dch").onclick=e=>{const b=e.target.closest("[data-dc]");if(!b)return;DQ.c=b.dataset.dc;document.querySelectorAll("#dch button").forEach(x=>x.classList.toggle("sel",x==b));run()};
+ $("#dv").onclick=e=>{DQ.v=DQ.v?0:1;e.currentTarget.classList.toggle("sel",!!DQ.v);run()};$("#ds").onclick=e=>{DQ.s=DQ.s=="near"?"name":"near";e.currentTarget.textContent="Sort: "+(DQ.s=="near"?"Nearest":"A–Z");run()};
+ $("#dres").onclick=e=>{const fb=e.target.closest("[data-ad]");if(fb){Ads.click(fb.dataset.ad);return bizProfile(Ads.get(fb.dataset.ad).biz)}const b=e.target.closest("[data-l]");if(!b)return;const l=locs.find(x=>x.id==b.dataset.l);if(l.adFeat)Ads.click(l.adFeat.id);if(l.biz)bizProfile(l.biz.id);else{close();openLoc(l)}};
+ $("#dreg").onclick=bizRegister;$("#dmy").onclick=myBiz;$("#dad").onclick=adsHub}
+function bizProfile(id){const b=BIZ.find(x=>x.id==id);if(!b)return;const l=locs.find(x=>x.id==b.loc),dc=DCATS.find(c=>c[0]==b.cat)||[0,"Business","🏢"],box=(t,v)=>`<div class="it" style="display:block"><b>${t}</b><small>${v}</small></div>`;
+ mod(`<div class="row" style="flex-wrap:nowrap"><div class="logo-b">${esc(b.logo)}</div><div style="flex:1"><h3 style="margin:0">${esc(b.name)}</h3><div class="mut">${dc[2]} ${dc[1]} · ${esc(CITY.name)}</div><div class="row" style="margin-top:4px">${b.status=="verified"?'<span class="tag" style="background:#2f7bff">✓ VERIFIED</span>':""}${b.demo?'<span class="tag" style="background:#8a8fa8">DEMO LISTING</span>':""}${b.sponsored?'<span class="tag" style="background:#18c76f">SPONSORED</span>':""}</div></div></div>${b.demo?'<p class="mut" style="font-size:12px">Example listing. Not a real business; every detail is a placeholder.</p>':""}<p>${esc(b.desc)}</p>`
+ +box("📍 Location",l?esc(l.n)+" · "+esc(l.d)+", "+esc(CITY.name):"—")+box("🌐 Website",b.demo?esc(b.website||"—"):(safeUrl(b.website)?`<a href="${esc(safeUrl(b.website))}" target="_blank" rel="noopener noreferrer" style="color:var(--b)">${esc(b.website)}</a>`:"—"))+box("✉ Contact",esc(b.contact||"—"))+box("🕒 Opening hours",esc(b.hours||"—"))
+ +(b.featured||[]).map(f=>`<div class="it" style="display:block;border-left:4px solid var(--p)"><span class="tag">FEATURED</span> <b>${esc(f.title)}</b><small>${esc(f.text)}</small></div>`).join("")+`<div class="row" style="margin-top:8px"><button class="big" id="bv">VISIT IN CITY</button></div>`);
+ $("#bv").onclick=()=>{close();if(l)openLoc(l)}}
+function bizRegister(){if(!need())return;const logos=["🍽","☕","🛍","🏨","🎓","🏥","🎵","💼","🧰","🌴","🎉","🏢"];let logo=logos[0];
+ mod(`<div id="bf"><h3>Register your business</h3><p class="mut" style="font-size:12px">Every submission is reviewed. Only verified businesses appear in Discover or in the city. Share only information you are authorised to publish.</p>
+ <input id="bn" maxlength="60" placeholder="Business name *"><select id="bc">${DCATS.map(c=>`<option value="${c[0]}">${c[2]} ${c[1]}</option>`).join("")}</select>
+ <select id="bcity">${CITIES.map(c=>`<option value="${c.id}" ${playable(c)?"":"disabled"}>${esc(c.name)}${playable(c)?"":" (coming soon)"}</option>`).join("")}</select>
+ <input id="ba" maxlength="120" placeholder="Street address or area *"><textarea id="bd" rows="3" maxlength="400" placeholder="Describe the business (20–400 characters) *"></textarea>
+ <input id="bw" maxlength="200" placeholder="Website (https://…)"><input id="be" maxlength="100" placeholder="Contact email"><input id="bp" maxlength="20" placeholder="Contact phone (email or phone required)">
+ <textarea id="bh" rows="2" maxlength="200" placeholder="Opening hours, e.g. Mon–Fri 09:00–17:00"></textarea><input id="bft" maxlength="40" placeholder="Featured content title (optional)"><input id="bfx" maxlength="160" placeholder="Featured content text (optional)">
+ <b>Logo icon</b> <small class="mut">(image upload is enabled after verification)</small><div class="sw" id="blg">${logos.map((e,i)=>`<button data-lg="${e}" class="${i?"":"sel"}">${e}</button>`).join("")}</div>
+ <label class="mut" style="display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-bottom:10px"><input type="checkbox" id="bk" style="width:auto;margin:2px 0 0"> I am authorised to represent this business and the information is accurate.</label><button class="big" style="width:100%" id="bsub">SUBMIT FOR REVIEW</button></div>`);
+ $("#blg").onclick=e=>{const b=e.target.closest("[data-lg]");if(!b)return;logo=b.dataset.lg;document.querySelectorAll("#blg button").forEach(x=>x.classList.toggle("sel",x==b))};
+ $("#bsub").onclick=()=>{const v=i=>($("#"+i).value||"").trim(),d={name:v("bn"),cat:v("bc"),city:v("bcity"),address:v("ba"),desc:v("bd"),website:v("bw"),email:v("be"),phone:v("bp"),hours:v("bh"),ft:v("bft"),fx:v("bfx"),logo};
+  const err=d.name.length<2?"Enter the business name":!DCATS.some(c=>c[0]==d.cat)?"Choose a category":!CITIES.some(c=>c.id==d.city&&playable(c))?"Choose an available city":d.address.length<3?"Enter an address or area":d.desc.length<20?"Description needs at least 20 characters"
+   :d.website&&!safeUrl(d.website)?"Website must start with https://":!d.email&&!d.phone?"Add an email or phone number":d.email&&!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(d.email)?"Email looks invalid":d.phone&&!/^[+0-9 ()-]{6,20}$/.test(d.phone)?"Phone looks invalid":!logos.includes(d.logo)?"Pick a logo icon":!$("#bk").checked?"Please confirm you are authorised":"";
+  if(err)return toast(err);const all=BizSub.all();if(all.filter(x=>x.owner==S.user&&x.status=="pending").length>=3)return toast("You already have 3 submissions awaiting review");
+  all.push({id:"sub_"+Date.now().toString(36),owner:S.user,status:"pending",at:Date.now(),d});BizSub.save(all);
+  mod(`<h3>✅ Submitted for review</h3><p><b>${esc(d.name)}</b> is now <b>Pending review</b>. It will not appear in Discover or in the city until an administrator verifies it.</p><button class="big" style="width:100%" id="nb">VIEW MY SUBMISSIONS</button>`);$("#nb").onclick=myBiz}}
+function myBiz(){if(!need())return;const a=BizSub.all().filter(x=>x.owner==S.user).reverse();
+ mod(`<h3>My business submissions</h3>`+(a.length?a.map(x=>`<div class="it" style="display:block"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>${esc(x.d.logo)} ${esc(x.d.name)}</b><span class="tag" style="background:#b4690e">${x.status=="pending"?"PENDING REVIEW":esc(x.status).toUpperCase()}</span></div><small>${esc((DCATS.find(c=>c[0]==x.d.cat)||[0,"Business"])[1])} · ${esc((CITIES.find(c=>c.id==x.d.city)||{}).name)} · submitted ${new Date(x.at).toLocaleDateString()}</small></div>`).join(""):`<p class="mut">No submissions yet.</p>`)+`<p class="mut" style="font-size:12px">Only an administrator can verify a business. Verification cannot be set from this page.</p><button class="big" style="width:100%" id="nb">REGISTER A BUSINESS</button>`);$("#nb").onclick=bizRegister}
+// ---- City platform: selector and city details (engine-agnostic) ----
+const localTime=tz=>{try{return new Intl.DateTimeFormat([], {timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date())}catch(e){return""}};
+const langs=a=>(a||[]).map(l=>LANG[l]||l).join(", ")||"none yet";
+function cityLabel(){$("#city").textContent="🌍 "+CITY.name+" ▾";const p=CITIES.filter(playable).length;$("#pcities").textContent="🌍 Cities: "+p+" playable · "+(CITIES.length-p)+" soon"}
+function cityHub(){const cur=CITY.id;
+ mod(`<h3>🌍 Choose a city</h3><p class="mut" style="font-size:12px">A city becomes playable only when its core content exists. Everything else is marked COMING SOON.</p>`+CITIES.map(c=>{const p=playable(c),r=cityReport(c);return`<button class="it" data-city="${esc(c.id)}" style="opacity:${p?1:.78}"><span style="font-size:24px">${p?"🌍":"🔒"}</span><span style="flex:1"><b>${esc(c.name)}</b>${c.id==cur?" · you are here":""}<small>${esc(c.country)} · ${localTime(c.tz)} local · ${esc(langs(c.langs))}</small><small>Content ${r.done}/${r.total}</small></span><span class="tag" style="background:${p?"var(--g)":"#8a8fa8"}">${p?"PLAYABLE":"COMING SOON"}</span></button>`}).join(""));
+ document.querySelectorAll("#box [data-city]").forEach(b=>b.onclick=()=>{const c=CITIES.find(x=>x.id==b.dataset.city);if(playable(c)&&c.id!=cur){close();switchCity(c.id)}else cityPreview(c.id)})}
+function cityPreview(id){const c=CITIES.find(x=>x.id==id),r=cityReport(c),p=playable(c);
+ mod(`<h3>${esc(c.name)} <span class="tag" style="background:${p?"var(--g)":"#8a8fa8"}">${p?"PLAYABLE":"COMING SOON"}</span></h3><div class="mut">${esc(c.country)} · ${esc(c.tz||"")} · ${localTime(c.tz)} local time</div><div class="mut" style="margin-bottom:8px">Languages: ${esc(langs(c.langs))} · App content available in: ${esc(langs(c.contentLangs))} (interface translation not built yet)</div><b>Content readiness (${r.done}/${r.total})</b>`
+  +r.items.map(i=>`<div class="it" style="display:block"><b>${i.ok?"✅":"⬜"} ${i.n}</b>${i.core?"":' <small class="mut" style="display:inline">(optional for launch)</small>'}<small>${esc(i.d)}</small></div>`).join("")
+  +(p?"":'<p class="mut" style="font-size:12px">Not playable yet. It opens only when its map, districts, landmarks, games and missions exist.</p>')+(p&&c.id!=CITY.id?`<button class="big" style="width:100%;margin-bottom:8px" id="ce">ENTER ${esc(c.name.toUpperCase())}</button>`:"")+`<button class="big o" style="width:100%" id="cb">BACK TO CITIES</button>`);
+ $("#cb").onclick=cityHub;if($("#ce"))$("#ce").onclick=()=>{close();switchCity(c.id)}}
+// ---- Search / lists / city ----
+function list(title,arr,ph){mod(`<h3>${title}</h3>${ph?`<input id="q" placeholder="Search the world…" autocomplete="off">`:""}<div id="res"></div>`);const r=$("#res"),f=()=>{const v=ph?$("#q").value.toLowerCase().trim():"";const a=arr.filter(l=>!v||(l.n+l.tg+l.d).toLowerCase().includes(v));r.innerHTML=a.length?a.sort((x,y)=>!!y.sp-!!x.sp).map(l=>`<button class="it" data-i="${l.id}"><span style="font-size:22px">${l.e}</span><span>${l.n}${l.sp?' <span class="tag">SPONSORED</span>':""}<small>${l.d} · ${l.t}</small></span></button>`).join(""):'<p class="mut">No results yet.</p>';r.querySelectorAll(".it").forEach(b=>b.onclick=()=>{close();openLoc(locs.find(l=>l.id==b.dataset.i))})};if(ph)$("#q").oninput=f;f()}
+$("#sr").onclick=()=>list("Search",locs,1);
+$("#mp").onclick=()=>{mod("<h3>Districts</h3>"+CITY.districts.map(d=>`<button class="it" data-k="${d.id}"><span style="font-size:22px">🗺</span><span>${d.name}<small>${d.locations.length} locations</small></span></button>`).join(""));document.querySelectorAll("#box [data-k]").forEach(b=>b.onclick=()=>{close();closeCard();const d=CITY.districts.find(x=>x.id==b.dataset.k);fly(d.center[0]+.5,d.center[1]+.5,1.1)})};
+$("#city").onclick=cityHub;
+
+$("#bMenu").onclick=()=>mod(`<h3>Menu</h3>`+["🌆 Explore World","🎮 Games","⭐ Missions","🧭 Discover","👥 Community","🏅 Leaderboard","👤 Profile","🏢 Businesses","📣 Advertise"].map(m=>`<button class="it" data-m="${m}">${m}</button>`).join(""));
+document.addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;const m=b.dataset.m;if(/World/.test(m)){close();closeCard();return}if(/Community/.test(m))return communityHub();if(/Advertise/.test(m))return adsHub();if(/Leaderboard/.test(m))return boardHub();if(/Games/.test(m))return gamesHub();if(/Missions/.test(m))return missionsHub();if(/Discover|Businesses/.test(m))return discoverHub();if(/Profile/.test(m))return profile();mod(`<h3>${m}</h3><p class="mut">Coming soon. Needs real backend data (community_posts, friendships, leaderboard views).</p>`)});
+function profile(){if(!S.user){mod(`<h3>Profile</h3><p class="mut">Create your character to save progress.</p><button class="big" style="width:100%" id="p2">SIGN UP FREE</button>`);$("#p2").onclick=auth;return}
+ mod(`<div class="row" style="flex-wrap:nowrap"><canvas id="pa" width="110" height="130" class="pv" style="width:110px;margin:0"></canvas><div style="flex:1"><h3 style="margin:0">${S.user}</h3><div class="mut">LEVEL ${lvl()} · ${CITY.name}</div><div class="xp" style="margin:6px 0"><b style="width:${S.xp%100}%"></b></div><div class="mut">${S.xp%100} / 100 XP</div><b>🪙 ${S.coins} LifeCoins</b></div></div>
+ <b>Interests</b><div class="sw" style="margin-top:6px">${(S.interests.length?S.interests:["None yet"]).map(i=>`<span class="pill" style="background:#8a5cf6">${i}</span>`).join("")}</div>
+ <b>Badges</b><div class="bgs">${BADGES.map(b=>`<div class="${b[2]()?"":"lk"}"><span>${b[0]}</span>${b[1]}</div>`).join("")}</div>
+ <div class="row" style="margin-bottom:8px"><button class="big s" id="wl">WALLET</button><button class="big s" id="fr">FRIENDS</button><button class="big s" id="lb">LEADERBOARD</button></div><div class="row"><button class="big" id="ec">EDIT CHARACTER</button><button class="big o" id="lo">LOG OUT</button></div>`);
+ AK.draw($("#pa").getContext("2d"),55,118,2.6,S.av,0);$("#ec").onclick=()=>editor("edit");$("#wl").onclick=walletHub;$("#fr").onclick=()=>communityHub("friends");$("#lb").onclick=()=>boardHub();$("#lo").onclick=logout}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x==b));const n=b.dataset.n;if(n=="game")gamesHub();else if(n=="mission")missionsHub();else if(n=="disc")discoverHub();else if(n=="prof")profile();else{closeCard();$("#cta").classList.remove("hide")}});
+const drawDisc=()=>{$("#disc").innerHTML=DISTRICTS.map(id=>{const l=locs.find(x=>x.id==id);return`<button class="pill w" data-d="${id}">${l.e==="🏆"?"🎮":l.e} ${l.n}</button>`}).join("")};drawDisc();
+$("#disc").onclick=e=>{const b=e.target.closest("[data-d]");if(b){document.querySelectorAll("#disc .pill").forEach(x=>x.classList.toggle("on",x==b));openLoc(locs.find(l=>l.id==b.dataset.d))}};
+let fi=0;setInterval(()=>{$("#tk").textContent=FEED[fi++%FEED.length]},3500);$("#tk").textContent=FEED[0];
+// ---- Loop ----
+let last=0;function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
+ if(tgt){cam.x+=(tgt.x-cam.x)*.12;cam.y+=(tgt.y-cam.y)*.12;z+=(tgt.z-z)*.12;if(Math.abs(tgt.x-cam.x)+Math.abs(tgt.y-cam.y)<.02)tgt=null}
+ step(dt);if(Games.hunt)Games.hunt.check();
+ draw(t);placeBubs();requestAnimationFrame(loop)}
+restore();Ads.apply();mkBubs();cityLabel();cta();requestAnimationFrame(loop);setTimeout(()=>{const l=$("#load");l.style.opacity=0;setTimeout(()=>l.remove(),400)},450);
+</script></body></html>
